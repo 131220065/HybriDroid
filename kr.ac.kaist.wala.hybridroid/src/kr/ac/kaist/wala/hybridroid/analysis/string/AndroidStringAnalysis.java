@@ -53,6 +53,7 @@ import kr.ac.kaist.wala.hybridroid.callgraph.AndroidMethodTargetSelector;
 import kr.ac.kaist.wala.hybridroid.callgraph.ResourceCallGraphBuilder;
 import kr.ac.kaist.wala.hybridroid.models.AndroidHybridAppModel;
 import kr.ac.kaist.wala.hybridroid.util.data.Pair;
+import nju.hzq.patch.AndroidStringAnalysisPatch;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -112,11 +113,14 @@ public class AndroidStringAnalysis implements StringAnalysis{
 	}
 	
 	@Override
-	public void addAnalysisScope(String path){
-		// TODO Auto-generated method stub
-		if(path.endsWith(".apk")){
+	public void addAnalysisScope(String path) {
+		if (path.endsWith(".apk")) {
+			List<String> dexFilePaths = AndroidStringAnalysisPatch.unzipDexFiles(path, ara.getDir());
+
 			try {
-				scope.addToScope(ClassLoaderReference.Application, DexFileModule.make(new File(path)));
+				for (String dexFilePath : dexFilePaths) {
+					scope.addToScope(ClassLoaderReference.Application, DexFileModule.make(new File(dexFilePath)));
+				}
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -124,10 +128,28 @@ public class AndroidStringAnalysis implements StringAnalysis{
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}else{
-			throw new InternalError("Support only apk format as target file");	
+		} else {
+			throw new InternalError("Support only apk format as target file");
 		}
 	}
+	
+//	@Override
+//	public void addAnalysisScope(String path){
+//		// TODO Auto-generated method stub
+//		if(path.endsWith(".apk")){
+//			try {
+//				scope.addToScope(ClassLoaderReference.Application, DexFileModule.make(new File(path)));
+//			} catch (IllegalArgumentException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			} catch (IOException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		}else{
+//			throw new InternalError("Support only apk format as target file");	
+//		}
+//	}
 
 	public void setupAndroidLibs(String... libs){
 		try{
@@ -159,8 +181,10 @@ public class AndroidStringAnalysis implements StringAnalysis{
 		// TODO Auto-generated method stub
 		this.hotspots = hotspots;
 		
+		IClassHierarchy cha = AndroidStringAnalysisPatch.subClassOfWebViewPatch(hotspots, scope);
+		
 		if(cg == null || pa == null){
-			Pair<CallGraph, PointerAnalysis<InstanceKey>> p = buildCG();
+			Pair<CallGraph, PointerAnalysis<InstanceKey>> p = buildCG(cha);
 			cg = p.fst();
 			pa = p.snd();
 		}
@@ -275,8 +299,8 @@ public class AndroidStringAnalysis implements StringAnalysis{
 	}
 	
 	@SuppressWarnings("unchecked")
-	private Pair<CallGraph, PointerAnalysis<InstanceKey>> buildCG() throws ClassHierarchyException, IllegalArgumentException, CallGraphBuilderCancelException{
-		IClassHierarchy cha = ClassHierarchy.make(scope);
+	private Pair<CallGraph, PointerAnalysis<InstanceKey>> buildCG(IClassHierarchy cha) throws ClassHierarchyException, IllegalArgumentException, CallGraphBuilderCancelException{
+		
 		//test
 //		IClass klass = cha.lookupClass(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/util/Log"));
 //		for(IMethod m : klass.getAllMethods())
@@ -286,7 +310,7 @@ public class AndroidStringAnalysis implements StringAnalysis{
 		AnalysisOptions options = new AnalysisOptions();
 		IRFactory<IMethod> irFactory = new DexIRFactory();
 		AnalysisCache cache = new AnalysisCache(irFactory);
-		options.setReflectionOptions(ReflectionOptions.NONE);
+		options.setReflectionOptions(ReflectionOptions.FULL);//hzq: test
 		options.setAnalysisScope(scope);
 		options.setEntrypoints(getEntrypoints(cha, scope, options, cache));
 		options.setSelector(new ClassHierarchyClassTargetSelector(cha));

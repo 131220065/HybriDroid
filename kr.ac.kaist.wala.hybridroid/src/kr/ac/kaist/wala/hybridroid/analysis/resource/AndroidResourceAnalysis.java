@@ -10,13 +10,19 @@
 *******************************************************************************/
 package kr.ac.kaist.wala.hybridroid.analysis.resource;
 
-import com.ibm.wala.util.debug.Assertions;
-
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import com.ibm.wala.util.debug.Assertions;
 
 
 public class AndroidResourceAnalysis {
@@ -62,12 +68,18 @@ public class AndroidResourceAnalysis {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		File smaliDir = null;
+		//File smaliDir = null;
+		
+		ArrayList<File> smaliDirs = new ArrayList<>();
+		
 		Set<File> valueDirs = new HashSet<File>();
 		
 		for(File subF : dir.listFiles()){
-			if(subF.isDirectory() && subF.getName().equals("smali"))
-				smaliDir = subF;
+			if(subF.isDirectory() && subF.getName().startsWith("smali")) {
+				System.out.println("hzq: add smalidir = " + subF.getName());
+				smaliDirs.add(subF);
+			}
+				
 			
 			if(subF.isDirectory() && subF.getName().equals("res")){
 				for(File subsubF : subF.listFiles()){
@@ -78,16 +90,19 @@ public class AndroidResourceAnalysis {
 			}
 		}
 		
-		if(smaliDir == null || valueDirs.isEmpty()){
+		if(smaliDirs.isEmpty() || valueDirs.isEmpty()){
 			throw new InternalError("there is no smali dir or string resource dir.");
 		}
 		
-		Set<File> rSet = getFiles(smaliDir, "R$string.smali", "R.java");
-
-		if(rSet.isEmpty() && !DEBUG) {
-			System.err.println("[WARNING] there is no R$string.smali file. resource analysis is aborted.");
-//			throw new InternalError("there is no R$string.smali file.");
+		Set<File> rSet = new HashSet<>();
+		
+		for(File smaliDir : smaliDirs) {
+			rSet.addAll(getFiles(smaliDir, "R$string.smali", "R.java"));
 		}
+		//Set<File> rSet = getFiles(smaliDir, "R$string.smali", "R.java");
+		
+		if(rSet.isEmpty() && !DEBUG)
+			throw new InternalError("there is no R$string.smali file.");
 		
 		for(File f : rSet){
 			String classpath = getClassPath(f);
