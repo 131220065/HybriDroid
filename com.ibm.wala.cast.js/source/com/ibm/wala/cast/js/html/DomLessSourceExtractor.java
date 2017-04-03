@@ -248,12 +248,16 @@ public class DomLessSourceExtractor extends JSSourceExtractor {
       Reader scriptInputStream;
       try {
         BOMInputStream bs = new BOMInputStream(scriptSrc.openConnection().getInputStream(), false,
+            ByteOrderMark.UTF_8,
             ByteOrderMark.UTF_16LE, ByteOrderMark.UTF_16BE,
             ByteOrderMark.UTF_32LE, ByteOrderMark.UTF_32BE);
         if (bs.hasBOM()) {
           System.err.println("removing BOM " + bs.getBOM());
+          scriptInputStream = new InputStreamReader(bs, bs.getBOMCharsetName());
+        } else {
+          scriptInputStream = new InputStreamReader(bs);
         }
-        scriptInputStream = new InputStreamReader(bs, bs.getBOMCharsetName());
+        
 //        scriptInputStream = new InputStreamReader(scriptSrc.openConnection().getInputStream());
       } catch (Exception e) {
         //it looks like this happens when we can't resolve the url?
