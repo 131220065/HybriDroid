@@ -44,7 +44,8 @@ import com.ibm.wala.viz.DotUtil;
 import com.ibm.wala.viz.PDFViewUtil;
 
 /**
- * This simple example WALA application builds a call graph and fires off ghostview to visualize a DOT representation.
+ * This simple example WALA application builds a call graph and fires off
+ * ghostview to visualize a DOT representation.
  */
 public class PDFCallGraph {
   public static boolean isDirectory(String appJar) {
@@ -61,7 +62,7 @@ public class PDFCallGraph {
     }
     return composeString(result);
   }
-  
+
   private static String composeString(Collection<String> s) {
     StringBuffer result = new StringBuffer();
     Iterator<String> it = s.iterator();
@@ -73,12 +74,13 @@ public class PDFCallGraph {
       result.append(it.next());
     }
     return result.toString();
-  }  
-  
+  }
+
   private final static String PDF_FILE = "cg.pdf";
 
   /**
-   * Usage: args = "-appJar [jar file name] {-exclusionFile [exclusionFileName]}" The "jar file name" should be something like
+   * Usage: args = "-appJar [jar file name] {-exclusionFile
+   * [exclusionFileName]}" The "jar file name" should be something like
    * "c:/temp/testdata/java_cup.jar"
    * 
    * @throws CancelException
@@ -89,7 +91,8 @@ public class PDFCallGraph {
   }
 
   /**
-   * Usage: args = "-appJar [jar file name] {-exclusionFile [exclusionFileName]}" The "jar file name" should be something like
+   * Usage: args = "-appJar [jar file name] {-exclusionFile
+   * [exclusionFileName]}" The "jar file name" should be something like
    * "c:/temp/testdata/java_cup.jar"
    * 
    * @throws CancelException
@@ -100,16 +103,22 @@ public class PDFCallGraph {
     validateCommandLine(p);
     return run(p.getProperty("appJar"), p.getProperty("exclusionFile", CallGraphTestUtil.REGRESSION_EXCLUSIONS));
   }
-
-  /**
-   * @param appJar something like "c:/temp/testdata/java_cup.jar"
-   * @throws CancelException
-   * @throws IllegalArgumentException
-   */
-  public static Process run(String appJar, String exclusionFile) throws IllegalArgumentException, CancelException {
+  
+  public static Process run(CallGraph cg) {
+    Graph<CGNode> g;
     try {
-      Graph<CGNode> g = buildPrunedCallGraph(appJar, (new FileProvider()).getFile(exclusionFile));
+      g = pruneForAppLoader(cg);
+      return runCGNodeGraph(g);
+    } catch (WalaException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+      return null;
+    }
+    
+  }
 
+  public static Process runCGNodeGraph(Graph<CGNode> g) {
+    try {
       Properties p = null;
       try {
         p = WalaExamplesProperties.loadProperties();
@@ -129,23 +138,37 @@ public class PDFCallGraph {
     } catch (WalaException e) {
       e.printStackTrace();
       return null;
-    } catch (IOException e) {
-      e.printStackTrace();
-      return null;
     }
   }
 
   /**
    * @param appJar something like "c:/temp/testdata/java_cup.jar"
+   * @throws CancelException
+   * @throws IllegalArgumentException
+   */
+  public static Process run(String appJar, String exclusionFile) throws IllegalArgumentException, CancelException {
+    try {
+      Graph<CGNode> g = buildPrunedCallGraph(appJar, (new FileProvider()).getFile(exclusionFile));
+      return runCGNodeGraph(g);
+    } catch (Exception e) {
+      e.printStackTrace();
+      return null;
+    }
+    
+  }
+
+  /**
+   * @param appJar
+   *          something like "c:/temp/testdata/java_cup.jar"
    * @return a call graph
    * @throws CancelException
    * @throws IllegalArgumentException
-   * @throws IOException 
+   * @throws IOException
    */
-  public static Graph<CGNode> buildPrunedCallGraph(String appJar, File exclusionFile) throws WalaException,
-      IllegalArgumentException, CancelException, IOException {
-    AnalysisScope scope = AnalysisScopeReader.makeJavaBinaryAnalysisScope(appJar, exclusionFile != null ? exclusionFile : new File(
-        CallGraphTestUtil.REGRESSION_EXCLUSIONS));
+  public static Graph<CGNode> buildPrunedCallGraph(String appJar, File exclusionFile)
+      throws WalaException, IllegalArgumentException, CancelException, IOException {
+    AnalysisScope scope = AnalysisScopeReader.makeJavaBinaryAnalysisScope(appJar,
+        exclusionFile != null ? exclusionFile : new File(CallGraphTestUtil.REGRESSION_EXCLUSIONS));
 
     ClassHierarchy cha = ClassHierarchy.make(scope);
 
@@ -175,9 +198,10 @@ public class PDFCallGraph {
    * Usage:
    * <ul>
    * <li>args[0] : "-appJar"
-   * <li> args[1] : something like "c:/temp/testdata/java_cup.jar" </ul?
+   * <li>args[1] : something like "c:/temp/testdata/java_cup.jar" </ul?
    * 
-   * @throws UnsupportedOperationException if command-line is malformed.
+   * @throws UnsupportedOperationException
+   *           if command-line is malformed.
    */
   public static void validateCommandLine(Properties p) {
     if (p.get("appJar") == null) {
@@ -190,13 +214,14 @@ public class PDFCallGraph {
    * 
    * Currently supported WALA types include
    * <ul>
-   * <li> {@link CGNode}
-   * <li> {@link LocalPointerKey}
+   * <li>{@link CGNode}
+   * <li>{@link LocalPointerKey}
    * </ul>
    */
   private static class ApplicationLoaderFilter extends Predicate<CGNode> {
 
-    @Override public boolean test(CGNode o) {
+    @Override
+    public boolean test(CGNode o) {
       if (o instanceof CGNode) {
         CGNode n = (CGNode) o;
         return n.getMethod().getDeclaringClass().getClassLoader().getReference().equals(ClassLoaderReference.Application);
