@@ -32,6 +32,8 @@ import com.ibm.wala.util.intset.IntSetUtil;
 import com.ibm.wala.util.strings.Atom;
 import com.ibm.wala.util.strings.StringStuff;
 
+import nju.hzq.patch.ClassFactoryContextSelectorPatch;
+
 /**
  * A {@link ContextSelector} to intercept calls to reflective class factories (e.g. Class.forName()) when the parameter is a string
  * constant
@@ -102,6 +104,8 @@ class ClassFactoryContextSelector implements ContextSelector {
         if (klass != null) {
           return new JavaTypeContext(new PointType(klass));
         }
+      } else {
+        return ClassFactoryContextSelectorPatch.classForNameNotStringConstant(caller, ir, invokeInstructions);
       }
     }
     return null;
