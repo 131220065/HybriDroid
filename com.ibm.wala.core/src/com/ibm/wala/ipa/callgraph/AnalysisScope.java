@@ -195,7 +195,7 @@ public class AnalysisScope {
    */
   public void addToScope(ClassLoaderReference loader, JarFile file) {
     List<Module> s = MapUtil.findOrCreateList(moduleMap, loader);
-    if (DEBUG_LEVEL > 0) {
+    if (DEBUG_LEVEL != 0) {
       System.err.println(("AnalysisScope: add JarFileModule " + file.getName()));
     }
     s.add(new JarFileModule(file));
@@ -209,7 +209,7 @@ public class AnalysisScope {
       throw new IllegalArgumentException("null m");
     }
     List<Module> s = MapUtil.findOrCreateList(moduleMap, loader);
-    if (DEBUG_LEVEL > 0) {
+    if (DEBUG_LEVEL != 0) {
       System.err.println(("AnalysisScope: add module " + m));
     }
     s.add(m);
@@ -237,7 +237,7 @@ public class AnalysisScope {
       throw new IllegalArgumentException("null m");
     }
     List<Module> s = MapUtil.findOrCreateList(moduleMap, loader);
-    if (DEBUG_LEVEL > 0) {
+    if (DEBUG_LEVEL != 0) {
       System.err.println(("AnalysisScope: add overriding module " + m));
     }
     s.add(0, m);

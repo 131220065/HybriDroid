@@ -27,7 +27,10 @@ public abstract class AbstractURLModule implements Module, ModuleEntry {
   private final URL url;
 
   public AbstractURLModule(URL url) {
-    assert url != null; 
+    assert url != null;
+    if(url == null) {
+      Assertions.UNREACHABLE();
+    }
     this.url = url;
   }
 

@@ -19,6 +19,7 @@ import com.ibm.wala.cast.js.translator.CAstRhinoTranslatorFactory;
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.classLoader.Language;
 import com.ibm.wala.core.tests.callGraph.CallGraphTestUtil;
+import com.ibm.wala.examples.drivers.PDFCallGraph;
 import com.ibm.wala.ipa.callgraph.*;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions.ReflectionOptions;
 import com.ibm.wala.ipa.callgraph.impl.ComposedEntrypoints;
@@ -46,6 +47,7 @@ import kr.ac.kaist.wala.hybridroid.util.file.FileCollector;
 import kr.ac.kaist.wala.hybridroid.util.file.FileWriter;
 import kr.ac.kaist.wala.hybridroid.util.file.YMLParser;
 import kr.ac.kaist.wala.hybridroid.util.file.YMLParser.YMLData;
+import nju.hzq.stub.HzqStub;
 
 import java.io.File;
 import java.io.IOException;
@@ -107,7 +109,7 @@ public class HybridCFGAnalysis {
 		asa.setExclusion(CallGraphTestUtil.REGRESSION_EXCLUSIONS);
 		asa.addAnalysisScope(targetPath);
 		List<Hotspot> hotspots = new ArrayList<Hotspot>();
-		hotspots.add(new ArgumentHotspot(ClassLoaderReference.Application, "android/webkit/WebView", "loadUrl(Ljava/lang/String;)V", 0));
+//		hotspots.add(new ArgumentHotspot(ClassLoaderReference.Application, "android/webkit/WebView", "loadUrl(Ljava/lang/String;)V", 0));
 //		hotspots.add(new ArgumentHotspot(ClassLoaderReference.Application, "android/webkit/WebView", "loadData(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V", 0));
 //		hotspots.add(new ArgumentHotspot(ClassLoaderReference.Application, "android/webkit/WebView", "loadDataWithBaseURL(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V", 0));
 //		hotspots.add(new ArgumentHotspot(ClassLoaderReference.Application, "android/webkit/WebView", "loadDataWithBaseURL(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V", 1));
@@ -139,6 +141,9 @@ public class HybridCFGAnalysis {
 			Map<String, String> chMap = new HashMap<String, String>();
 			
 			for(String v : vs){
+				
+				HzqStub.stubPrint("v = " + v);
+				
 				if(v.startsWith("javascript:")){ // if it is javascript code, then
 					String outJSName = "js_" + (i++) + ".html";
 					File js = FileWriter.makeHtmlFile(dirPath, outJSName, v.substring(v.indexOf(":")+1));
@@ -246,7 +251,7 @@ public class HybridCFGAnalysis {
 		ComposedEntrypoints roots = AndroidHybridAppModel.getEntrypoints(cha,
 				scope, options, cache);
 		options.setEntrypoints(roots);
-		options.setReflectionOptions(ReflectionOptions.NONE);
+		options.setReflectionOptions(ReflectionOptions.FULL);//hzq: FULLºÍNONE
 		addHybridDispatchLogic(options, scope, cha);
 
 		AndroidHybridCallGraphBuilder b = new AndroidHybridCallGraphBuilder(
@@ -255,6 +260,8 @@ public class HybridCFGAnalysis {
 		CallGraph cg = b.makeCallGraph(options);
 		PointerAnalysis<InstanceKey> pa = b.getPointerAnalysis();
 		
+		PDFCallGraph.runCGNodeGraph(cg);
+		
 		warnings = b.getWarning();
 		//print warning
 		System.out.println("===== Not Found Error =====");
@@ -262,7 +269,7 @@ public class HybridCFGAnalysis {
 			System.out.println(s);
 		}
 		System.out.println("===========================");
-
+		
 		return Pair.make(cg, pa);
 	}
 	

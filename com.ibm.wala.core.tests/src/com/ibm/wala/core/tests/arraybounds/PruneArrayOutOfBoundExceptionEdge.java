@@ -209,7 +209,7 @@ public class PruneArrayOutOfBoundExceptionEdge {
             + "nor ArrayIndexOutOfBoundsException: " + identifyer + ":" + method.getLineNumber(lastInstruction.iindex),
             lastInstruction.getExceptionTypes(), matcher1);
 
-        Matcher<Iterable<? extends TypeReference>> matcher2 = everyItem(anyOf(equalTo(TypeReference.JavaLangNullPointerException),
+        Matcher<Iterable<TypeReference>> matcher2 = everyItem(anyOf(equalTo(TypeReference.JavaLangNullPointerException),
             equalTo(TypeReference.JavaLangArrayIndexOutOfBoundsException)));
 
         collector.checkThat("Edge deleted but cause instruction throws other exceptions as NullPointerException"

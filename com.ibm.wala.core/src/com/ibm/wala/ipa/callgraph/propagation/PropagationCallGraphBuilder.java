@@ -74,7 +74,7 @@ public abstract class PropagationCallGraphBuilder implements CallGraphBuilder {
 
   private final static boolean DEBUG_PUT = DEBUG_ALL | false;
 
-  private final static boolean DEBUG_ENTRYPOINTS = DEBUG_ALL | false;
+  private final static boolean DEBUG_ENTRYPOINTS = DEBUG_ALL | true;
 
   /**
    * Meta-data regarding how pointers are modeled

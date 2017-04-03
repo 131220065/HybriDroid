@@ -14,6 +14,7 @@ import com.ibm.wala.cast.js.ipa.callgraph.JSCFABuilder;
 import com.ibm.wala.cast.js.ipa.callgraph.JSCallGraphUtil;
 import com.ibm.wala.cast.js.test.JSCallGraphBuilderUtil;
 import com.ibm.wala.cast.js.translator.CAstRhinoTranslatorFactory;
+import com.ibm.wala.examples.drivers.PDFCallGraph;
 import com.ibm.wala.ipa.callgraph.CallGraph;
 import com.ibm.wala.ipa.callgraph.propagation.InstanceKey;
 import com.ibm.wala.ipa.callgraph.propagation.PointerAnalysis;
@@ -110,6 +111,7 @@ public class Shell {
 //				Shell.START = System.currentTimeMillis();
 				HybridCFGAnalysis cfgAnalysis = new HybridCFGAnalysis();
 				Pair<CallGraph, PointerAnalysis<InstanceKey>> p = cfgAnalysis.main(targetPath, LocalFileReader.androidJar(Shell.walaProperties).getPath());
+			
 //				PointerAnalysis<InstanceKey> pa = p.snd;
 //				Shell.END = System.currentTimeMillis();
 //				System.err.println("#time: " + (((double)(Shell.END - Shell.START))/1000d) + "s");

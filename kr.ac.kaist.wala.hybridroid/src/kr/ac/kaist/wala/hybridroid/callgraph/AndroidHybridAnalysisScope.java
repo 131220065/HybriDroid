@@ -114,7 +114,7 @@ public class AndroidHybridAnalysisScope extends AnalysisScope {
 			scope = setUpJsAnalysisScope(dir, scope, htmls);
 
 		fs.close();
-
+		
 		return scope;
 	}
 
