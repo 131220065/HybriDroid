@@ -29,11 +29,18 @@ import com.ibm.wala.util.collections.Pair;
 import com.ibm.wala.util.debug.Assertions;
 import com.ibm.wala.util.functions.Function;
 
+import nju.hzq.patch.ConcreteTypeKeyPatch;
+
 /**
  * An instance key which represents a unique set for each concrete type.
  */
 public final class ConcreteTypeKey implements InstanceKey {
-  private final IClass type;
+  private IClass type;
+  
+  public void changeTypeTo(IClass type) {
+    this.type = type;
+    ConcreteTypeKeyPatch.addChangeTypeMethod();
+  }
 
   public ConcreteTypeKey(IClass type) {
     if (type == null) {
