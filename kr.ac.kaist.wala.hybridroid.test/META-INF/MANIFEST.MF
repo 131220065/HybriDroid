@@ -8,4 +8,6 @@ Bundle-ClassPath: test.jar,
 Export-Package: kr.ac.kaist.wala.hybridroid.test,
  kr.ac.kaist.wala.hybridroid.test.annotation,
  kr.ac.kaist.wala.hybridroid.test.callgraph
-Require-Bundle: org.junit;bundle-version="4.11.0"
+Require-Bundle: org.junit;bundle-version="4.11.0",
+ kr.ac.kaist.wala.hybridroid;bundle-version="1.0.0"
+Import-Package: kr.ac.kaist.wala.hybridroid.analysis

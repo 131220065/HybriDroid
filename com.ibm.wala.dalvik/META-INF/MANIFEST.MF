@@ -5,7 +5,6 @@ Bundle-SymbolicName: com.ibm.wala.dalvik
 Bundle-Version: 1.3.10.qualifier
 Require-Bundle: com.ibm.wala.cast;bundle-version="1.0.0",
  com.ibm.wala.core;bundle-version="1.1.3",
- com.ibm.wala.ide;bundle-version="1.1.3",
  com.ibm.wala.shrike;bundle-version="1.3.1"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy 
@@ -34,13 +33,6 @@ Export-Package: com.google.common.annotations,
  com.ibm.wala.dalvik.ssa,
  com.ibm.wala.dalvik.util,
  com.ibm.wala.dalvik.util.androidEntryPoints,
- org.apache.commons.cli,
- org.apache.commons.io,
- org.apache.commons.io.comparator,
- org.apache.commons.io.filefilter,
- org.apache.commons.io.input,
- org.apache.commons.io.monitor,
- org.apache.commons.io.output,
  org.jf.dexlib,
  org.jf.dexlib.Code,
  org.jf.dexlib.Code.Analysis,
