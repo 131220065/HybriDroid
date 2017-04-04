@@ -27,8 +27,8 @@ import com.ibm.wala.util.debug.Assertions;
 
 public class ClassFactoryContextSelectorPatch {
   public static Context classForNameNotStringConstant(CGNode caller, IR ir, SSAAbstractInvokeInstruction[] invokeInstructions) {
-  //hzq: 不是String常量怎么办？找cast，替换成它的子类
-    System.out.println("hzq: 不是String常量");
+  //hzq: not String Constant
+    System.out.println("hzq: Class.forName's parameter not String Constant");
     SSAInstruction[] insts = ir.getInstructions();
     for(SSAInstruction inst : insts) {
       if(inst instanceof SSACheckCastInstruction) {
@@ -63,11 +63,11 @@ public class ClassFactoryContextSelectorPatch {
             }
             castClass = (IClass) classes.toArray()[1];
           }
-          System.out.println("hzq: 实际Type = " + castClass);
+          System.out.println("hzq: actual Type = " + castClass);
           return new JavaTypeContext(new PointType(castClass));
           
         } else {
-          System.out.println("hzq: 实际Type = " + castClass);
+          System.out.println("hzq: actual Type = " + castClass);
           return new JavaTypeContext(new PointType(castClass));
         }
       }

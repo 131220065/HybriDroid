@@ -125,13 +125,13 @@ public class AndroidHybridAnalysisScope extends AnalysisScope {
 
 		JavaScriptLoader.addBootstrapFile(WebUtil.preamble);
 		if(SystemUtils.IS_OS_WINDOWS) {
-			scope.addToScope(scope.getJavaScriptLoader(), new SourceURLModule(AndroidHybridAppModel.class.getResource("prologue.js")) {
+			scope.addToScope(scope.getJavaScriptLoader(), new SourceURLModule(AndroidHybridAppModel.class.getClassLoader().getResource("prologue.js")) {
 				@Override
 				public String getName() {
 					return "prologue.js";
 				}
 			});
-			scope.addToScope(scope.getJavaScriptLoader(), new SourceURLModule(AndroidHybridAppModel.class.getResource("preamble.js")) {
+			scope.addToScope(scope.getJavaScriptLoader(), new SourceURLModule(AndroidHybridAppModel.class.getClassLoader().getResource("preamble.js")) {
 				@Override
 				public String getName() {
 					return "preamble.js";
