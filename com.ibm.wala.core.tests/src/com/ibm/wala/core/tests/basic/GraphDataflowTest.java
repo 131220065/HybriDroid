@@ -65,6 +65,7 @@ public class GraphDataflowTest extends WalaTestCase {
       System.err.println(expectedStringNodeEdge());
     }
     Assert.assertEquals(expectedStringNodeEdge(), result);
+    System.err.println("testSolverNodeEdge end");
   }
 
   @Test public void testSolverNodeOnly() throws CancelException {
@@ -182,11 +183,14 @@ public class GraphDataflowTest extends WalaTestCase {
       public UnaryOperator<BitVectorVariable> getEdgeTransferFunction(String from, String to) {
         if (from == nodes[1] && to == nodes[3])
           return new BitVectorFilter(zero());
-        else if (from == nodes[1] && to == nodes[2])
+        else if (from == nodes[3] && to == nodes[4])
+          return new BitVectorFilter(one());
+        else if(from == nodes[2] && to == nodes[4])
           return new BitVectorFilter(one());
         else {
           return BitVectorIdentity.instance();
         }
+        //return BitVectorIdentity.instance();
       }
 
       @Override

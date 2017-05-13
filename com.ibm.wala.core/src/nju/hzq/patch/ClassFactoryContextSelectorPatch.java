@@ -39,6 +39,7 @@ public class ClassFactoryContextSelectorPatch {
         //System.out.println("castIndex = " + castInst.iindex + ", forNameIndex = " + invokeInstructions[0].iindex);
         TypeReference[] castTypes = castInst.getDeclaredResultTypes();
         if(castTypes.length != 1) {
+          System.out.println("hzq: actual Type = null");
           return null;
         }
         TypeReference t = castTypes[0];
@@ -46,19 +47,22 @@ public class ClassFactoryContextSelectorPatch {
         IClass castClass = caller.getClassHierarchy().lookupClass(t);
         if(castClass == null) {
           Assertions.UNREACHABLE();
+          System.out.println("hzq: actual Type = null");
           return null;
         }
         if(castClass.isInterface() || castClass.isAbstract()) {
           if(castClass.isInterface()) {
             Set<IClass> classes = caller.getClassHierarchy().getImplementors(t);
             if(classes.size() <= 0) {
+              System.out.println("hzq: actual Type = null");
               return null;
             }
             castClass = (IClass) classes.toArray()[0];
           }
-          while(castClass.isInterface() || castClass.isAbstract()) {
+          while(castClass.isAbstract()) {
              Collection<IClass> classes = caller.getClassHierarchy().getImmediateSubclasses(castClass);
             if(classes.size() < 2) {
+              System.out.println("hzq: actual Type = null");
               return null;
             }
             castClass = (IClass) classes.toArray()[1];
@@ -72,6 +76,7 @@ public class ClassFactoryContextSelectorPatch {
         }
       }
     }
+    System.out.println("hzq: actual Type = null");
     return null;
   }
 }

@@ -22,6 +22,8 @@ import com.ibm.wala.types.TypeReference;
 import com.ibm.wala.types.annotations.Annotation;
 import com.ibm.wala.util.strings.Atom;
 
+import nju.hzq.stub.HzqStub;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.net.URL;

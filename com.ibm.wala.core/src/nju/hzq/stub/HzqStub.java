@@ -20,4 +20,8 @@ public class HzqStub {
       System.err.println("hzq: " + message + "\n\t##in class " + stacks[1].getClassName() + "." + stacks[1].getMethodName() );
     }
   }
+  
+  public static void stubModified(String message) {
+    
+  }
 }

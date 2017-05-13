@@ -32,6 +32,8 @@ import com.ibm.wala.util.intset.IntIterator;
 import com.ibm.wala.util.intset.IntSet;
 import com.ibm.wala.util.strings.StringStuff;
 
+import nju.hzq.stub.HzqStub;
+
 /**
  * An SSA IR.
  * 
@@ -137,6 +139,16 @@ public abstract class IR {
    * @return a String which is a readable representation of the instruction position corresponding to an instruction index
    */
   protected abstract String instructionPosition(int instructionIndex);
+  
+  public String getInstructionString(int ii) {//hzq: add
+    if(ii < 0) {
+      return "null";
+    }
+    if(instructions[ii] == null) {
+      return null;
+    }
+    return instructions[ii].toString(symbolTable);
+  }
 
   @Override
   public String toString() {

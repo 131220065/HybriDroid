@@ -55,6 +55,8 @@ import com.ibm.wala.types.MethodReference;
 import com.ibm.wala.types.TypeName;
 import com.ibm.wala.types.TypeReference;
 
+import nju.hzq.stub.HzqStub;
+
 public class JSCallGraphUtil extends com.ibm.wala.cast.ipa.callgraph.CAstCallGraphUtil {
 
   private static final boolean DEBUG = false;
@@ -140,6 +142,12 @@ public class JSCallGraphUtil extends com.ibm.wala.cast.ipa.callgraph.CAstCallGra
         if (n.getMethod().getReference().getDeclaringClass().getName().toString().endsWith(tail)) {
           nodes.add(n);
         }
+      }
+      if(nodes.size() >= 1) {
+        HzqStub.stubPrint("找到了");
+      } else {
+        HzqStub.stubPrint("没找到节点");
+        System.exit(0);
       }
       return nodes;
     }

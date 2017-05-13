@@ -102,16 +102,14 @@ public class Shell {
 					    // make actual file name and directory
 					    JSCFABuilder b = JSCallGraphBuilderUtil.makeHTMLCGBuilder(url);
 					    CallGraph callGraph = b.makeCallGraph(b.getOptions());
-					    PointerAnalysis<InstanceKey> pa = b.getPointerAnalysis();	
-					    WalaCGVisualizer vis = new WalaCGVisualizer();
-					    vis.visualize(callGraph, "cfg.dot");
-					    vis.printLabel("jslabel.txt");
+					    PointerAnalysis<InstanceKey> pa = b.getPointerAnalysis();
+					    PDFCallGraph.runGraph(callGraph);
 			}else{
 				
 //				Shell.START = System.currentTimeMillis();
 				HybridCFGAnalysis cfgAnalysis = new HybridCFGAnalysis();
 				Pair<CallGraph, PointerAnalysis<InstanceKey>> p = cfgAnalysis.main(targetPath, LocalFileReader.androidJar(Shell.walaProperties).getPath());
-			
+				//PDFCallGraph.run(p.fst);
 //				PointerAnalysis<InstanceKey> pa = p.snd;
 //				Shell.END = System.currentTimeMillis();
 //				System.err.println("#time: " + (((double)(Shell.END - Shell.START))/1000d) + "s");

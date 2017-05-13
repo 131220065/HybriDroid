@@ -10,6 +10,9 @@
 *******************************************************************************/
 package kr.ac.kaist.wala.hybridroid.callgraph;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,6 +25,7 @@ import com.ibm.wala.cast.ipa.callgraph.AstSSAPropagationCallGraphBuilder.AstPoin
 import com.ibm.wala.cast.ipa.callgraph.CrossLanguageSSAPropagationCallGraphBuilder;
 import com.ibm.wala.cast.ipa.callgraph.GlobalObjectKey;
 import com.ibm.wala.cast.ipa.callgraph.ReflectedFieldPointerKey;
+import com.ibm.wala.cast.ipa.cha.CrossLanguageClassHierarchy;
 import com.ibm.wala.cast.ir.ssa.AstGlobalRead;
 import com.ibm.wala.cast.ir.ssa.AstGlobalWrite;
 import com.ibm.wala.cast.js.ipa.callgraph.JSSSAPropagationCallGraphBuilder;
@@ -39,6 +43,7 @@ import com.ibm.wala.classLoader.IClass;
 import com.ibm.wala.classLoader.IField;
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.classLoader.NewSiteReference;
+import com.ibm.wala.classLoader.SourceURLModule;
 import com.ibm.wala.fixpoint.UnaryOperator;
 import com.ibm.wala.ipa.callgraph.AnalysisCache;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions;
@@ -60,6 +65,8 @@ import com.ibm.wala.ipa.callgraph.propagation.PointsToSetVariable;
 import com.ibm.wala.ipa.callgraph.propagation.PropagationCallGraphBuilder;
 import com.ibm.wala.ipa.callgraph.propagation.PropagationSystem;
 import com.ibm.wala.ipa.callgraph.propagation.SSAPropagationCallGraphBuilder;
+import com.ibm.wala.ipa.cha.ClassHierarchy;
+import com.ibm.wala.ipa.cha.ClassHierarchyException;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.ssa.DefUse;
 import com.ibm.wala.ssa.IR;
@@ -87,6 +94,7 @@ import com.ibm.wala.util.intset.MutableSparseIntSet;
 import com.ibm.wala.util.intset.OrdinalSet;
 import com.ibm.wala.util.strings.Atom;
 
+import kr.ac.kaist.wala.hybridroid.analysis.HybridCFGAnalysis;
 import kr.ac.kaist.wala.hybridroid.analysis.resource.AndroidResourceAnalysis;
 import kr.ac.kaist.wala.hybridroid.analysis.string.AndroidStringAnalysis;
 import kr.ac.kaist.wala.hybridroid.analysis.string.AndroidStringAnalysis.BridgeInfo;
@@ -234,6 +242,7 @@ public class AndroidHybridCallGraphBuilder extends JavaJavaScriptHybridCallGraph
 			// arguments.
 			if (typeChecker != null)
 				typeChecker.argNumCheck(caller, instruction, target.getMethod(), paramCount, argCount);
+				
 
 			final PointerKey F = this.getTargetPointerKey(caller, instruction, target, i);
 
@@ -322,10 +331,11 @@ public class AndroidHybridCallGraphBuilder extends JavaJavaScriptHybridCallGraph
 				AndroidResourceAnalysis asa) {
 			super(builder, node, asa);
 		}
+		
 
 		public void hzqVisitInvokePatch(SSAInvokeInstruction instruction) {
 			// TODO Auto-generated method stub
-			// hzq: visitµÄÊÇjavaµÄinstruction
+			// hzq: visitï¿½ï¿½ï¿½ï¿½javaï¿½ï¿½instruction
 			CGNode caller = node;
 			CallSiteReference site = instruction.getCallSite();
 			PropagationSystem system = builder.getPropagationSystem();
@@ -368,9 +378,10 @@ public class AndroidHybridCallGraphBuilder extends JavaJavaScriptHybridCallGraph
 					// to find the object creation site. only support intra,
 					// not inter-method.
 					// only support constant name, not composition name.
-					if (symTab.isConstant(nameUse)) {// addJavaScriptInterface×Ö·û´®³£Á¿²ÎÊý
+					if (symTab.isConstant(nameUse)) {// addJavaScriptInterfaceï¿½Ö·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 						String name = (String) symTab.getConstantValue(nameUse);
-
+						
+					
 						/*
 						 * Set<BridgeDescription> bdSet =
 						 * bi.getDescriptionsOfBridge(node, objUse);
@@ -398,9 +409,9 @@ public class AndroidHybridCallGraphBuilder extends JavaJavaScriptHybridCallGraph
 						boolean isSuc = cha.addClass(wClass);
 						HzqStub.stubPrint("addClass = " + isSuc);
 
-						InstanceKey bridgeIk = bridgeIkTemp; // ÖØÐÂÐÞÕýbridgeIk
+						InstanceKey bridgeIk = bridgeIkTemp; // bridgeIk
 						((ConcreteTypeKey) bridgeIk).changeTypeTo(wClass);
-
+						//bridgeIk = new ConcreteTypeKey(wClass);//hzq: test
 						AndroidHybridAppModel.addJSInterface(name, bridgeIk);
 						// hzq add end
 
@@ -421,7 +432,7 @@ public class AndroidHybridCallGraphBuilder extends JavaJavaScriptHybridCallGraph
 						Set<Pair<String, Integer>> overloadChecker = new HashSet<Pair<String, Integer>>();
 
 						for (IMethod method : methods) {
-							if (hasJavascriptInterfaceAnnotation(method)) {
+							if (hasJavascriptInterfaceAnnotation(method) && method.isPublic()) {
 								wClass.addMethodAsField(method);
 								String mname = method.getName().toString();
 								int params = method.getNumberOfParameters();
@@ -442,9 +453,9 @@ public class AndroidHybridCallGraphBuilder extends JavaJavaScriptHybridCallGraph
 								system.findOrCreateIndexForInstanceKey(ik);
 
 								system.newConstraint(constantPK, ik);// hzq:
-																		// ÕâÒ»Ìõ»á¾ö¶¨Éú³ÉµÄµ÷ÓÃÍ¼ÖÐAnnotationTest.apkµÄgetFirstName½ÚµãÊÇ·ñ´æÔÚ
+																		// ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÉµÄµï¿½ï¿½ï¿½Í¼ï¿½ï¿½AnnotationTest.apkï¿½ï¿½getFirstNameï¿½Úµï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
 								system.newConstraint(typePK, ik);// hzq:
-																	// ÕâÒ»Ìõ»áÓ°ÏìgetFirstNameÊÇ·ñMatch
+																	// ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½Ó°ï¿½ï¿½getFirstNameï¿½Ç·ï¿½Match
 							}
 						}
 
@@ -652,17 +663,16 @@ public class AndroidHybridCallGraphBuilder extends JavaJavaScriptHybridCallGraph
 								Set<Pair<String, Integer>> overloadChecker = new HashSet<Pair<String, Integer>>();
 
 								for (IMethod method : methods) {
-									if (hasJavascriptInterfaceAnnotation(method)) {
+									if (hasJavascriptInterfaceAnnotation(method) && method.isPublic()) {
 										wClass.addMethodAsField(method);
 										String mname = method.getName().toString();
 										int params = method.getNumberOfParameters();
 										Pair<String, Integer> p = Pair.make(mname, params);
 										if (overloadChecker.contains(p)) {
 											// TODO: check method overloading
-											// mismatchW.add("[Error] the method
-											// is overloaded by type: " +
-											// wClass.getName() + ": " + mname +
-											// "(" + params + ")");
+											 mismatchW.add("[Error] the method is overloaded by type: " +
+											 wClass.getName() + ": " + mname +
+											 "(" + params + ")");
 										}
 										overloadChecker.add(p);
 
@@ -1166,7 +1176,7 @@ public class AndroidHybridCallGraphBuilder extends JavaJavaScriptHybridCallGraph
 					Assertions.UNREACHABLE("Global read must be invoked in AstMethod: " + method.getClass().getName());
 				String fn = getFileName((AstMethod) method);
 
-				if (fn.endsWith("preamble.js") || fn.endsWith("prologue.js")) {
+				if (fn.endsWith("preamble.js") || fn.endsWith("prologue.js") || fn.endsWith("hzqbridge.js")) {
 					for (InstanceKey globalObj : builder.getGlobalObjects(JavaScriptTypes.jsName)) {
 						if (directGlobalObjectRef(field)) {
 							// points-to set is just the global object

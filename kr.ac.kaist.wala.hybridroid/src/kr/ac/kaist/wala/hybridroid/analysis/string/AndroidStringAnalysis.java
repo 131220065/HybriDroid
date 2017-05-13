@@ -10,39 +10,71 @@
 *******************************************************************************/
 package kr.ac.kaist.wala.hybridroid.analysis.string;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.jar.JarFile;
+
 import com.ibm.wala.analysis.pointers.HeapGraph;
 import com.ibm.wala.classLoader.CallSiteReference;
 import com.ibm.wala.classLoader.IClass;
 import com.ibm.wala.classLoader.IMethod;
 import com.ibm.wala.classLoader.JarFileModule;
 import com.ibm.wala.dalvik.classLoader.DexFileModule;
-import com.ibm.wala.dalvik.classLoader.DexIRFactory;
 import com.ibm.wala.dalvik.ipa.callgraph.impl.AndroidEntryPoint;
 import com.ibm.wala.dalvik.util.AndroidEntryPointLocator;
 import com.ibm.wala.dalvik.util.AndroidEntryPointLocator.LocatorFlags;
-import com.ibm.wala.ipa.callgraph.*;
+import com.ibm.wala.ipa.callgraph.AnalysisCache;
+import com.ibm.wala.ipa.callgraph.AnalysisOptions;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions.ReflectionOptions;
+import com.ibm.wala.ipa.callgraph.AnalysisScope;
+import com.ibm.wala.ipa.callgraph.CGNode;
+import com.ibm.wala.ipa.callgraph.CallGraph;
+import com.ibm.wala.ipa.callgraph.CallGraphBuilder;
+import com.ibm.wala.ipa.callgraph.CallGraphBuilderCancelException;
+import com.ibm.wala.ipa.callgraph.Entrypoint;
 import com.ibm.wala.ipa.callgraph.impl.ClassHierarchyClassTargetSelector;
 import com.ibm.wala.ipa.callgraph.impl.DefaultEntrypoint;
 import com.ibm.wala.ipa.callgraph.propagation.InstanceKey;
 import com.ibm.wala.ipa.callgraph.propagation.LocalPointerKey;
 import com.ibm.wala.ipa.callgraph.propagation.PointerAnalysis;
 import com.ibm.wala.ipa.callgraph.propagation.PointerKey;
-import com.ibm.wala.ipa.cha.ClassHierarchy;
 import com.ibm.wala.ipa.cha.ClassHierarchyException;
 import com.ibm.wala.ipa.cha.IClassHierarchy;
 import com.ibm.wala.ssa.IR;
-import com.ibm.wala.ssa.IRFactory;
 import com.ibm.wala.ssa.SSAAbstractInvokeInstruction;
 import com.ibm.wala.ssa.SSAInstruction;
-import com.ibm.wala.types.*;
+import com.ibm.wala.ssa.SymbolTable;
+import com.ibm.wala.types.ClassLoaderReference;
+import com.ibm.wala.types.Descriptor;
+import com.ibm.wala.types.MethodReference;
+import com.ibm.wala.types.Selector;
+import com.ibm.wala.types.TypeName;
+import com.ibm.wala.types.TypeReference;
 import com.ibm.wala.util.collections.HashSetFactory;
 import com.ibm.wala.util.config.FileOfClasses;
+import com.ibm.wala.util.debug.Assertions;
 import com.ibm.wala.util.intset.OrdinalSet;
 import com.ibm.wala.util.strings.Atom;
+
 import kr.ac.kaist.wala.hybridroid.analysis.FieldDefAnalysis;
+import kr.ac.kaist.wala.hybridroid.analysis.HybridCFGAnalysis;
 import kr.ac.kaist.wala.hybridroid.analysis.resource.AndroidResourceAnalysis;
-import kr.ac.kaist.wala.hybridroid.analysis.string.constraint.*;
+import kr.ac.kaist.wala.hybridroid.analysis.string.constraint.ConstraintGraph;
+import kr.ac.kaist.wala.hybridroid.analysis.string.constraint.ConstraintVisitor;
+import kr.ac.kaist.wala.hybridroid.analysis.string.constraint.IBox;
+import kr.ac.kaist.wala.hybridroid.analysis.string.constraint.IConstraintNode;
+import kr.ac.kaist.wala.hybridroid.analysis.string.constraint.VarBox;
 import kr.ac.kaist.wala.hybridroid.analysis.string.constraint.solver.ForwardSetSolver;
 import kr.ac.kaist.wala.hybridroid.analysis.string.constraint.solver.domain.value.IStringValue;
 import kr.ac.kaist.wala.hybridroid.analysis.string.constraint.solver.domain.value.IValue;
@@ -54,13 +86,9 @@ import kr.ac.kaist.wala.hybridroid.callgraph.ResourceCallGraphBuilder;
 import kr.ac.kaist.wala.hybridroid.models.AndroidHybridAppModel;
 import kr.ac.kaist.wala.hybridroid.util.data.Pair;
 import nju.hzq.patch.AndroidStringAnalysisPatch;
-
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-import java.util.jar.JarFile;
+import nju.hzq.patch.HzqHybridTools;
+import nju.hzq.patch.JavaCallGraphTools;
+import nju.hzq.stub.HzqStub;
 
 /**
  * 
@@ -115,11 +143,33 @@ public class AndroidStringAnalysis implements StringAnalysis{
 	@Override
 	public void addAnalysisScope(String path) {
 		if (path.endsWith(".apk")) {
-			List<String> dexFilePaths = AndroidStringAnalysisPatch.unzipDexFiles(path, ara.getDir());
-
 			try {
-				for (String dexFilePath : dexFilePaths) {
-					scope.addToScope(ClassLoaderReference.Application, DexFileModule.make(new File(dexFilePath)));
+				List<String> dexFilePaths = AndroidStringAnalysisPatch.unzipDexFiles(path, ara.getDir());
+				if(dexFilePaths.size() > 1) {
+					System.out.println("妫�娴嬪埌multiDex :");
+					for(int i = 0; i < dexFilePaths.size(); i++) {
+						System.out.println("搴忓彿 = " + i + " : " + dexFilePaths.get(i));
+					}
+					/*System.out.println("璇疯緭鍏ュ簭鍙烽�夋嫨鍏朵腑涓�涓猟ex杩涜鍒嗘瀽锛屾垨鑰呰緭鍏�-1閫夋嫨鍏ㄩ儴dex鏂囦欢杩涜鍒嗘瀽锛�");
+					int index = new Scanner(System.in).nextInt();
+					while(index >= dexFilePaths.size() || index < -1) {
+						System.out.println("杈撳叆搴忓彿瓒呭嚭鑼冨洿,璇烽噸鏂拌緭鍏�");
+						index = new Scanner(System.in).nextInt();
+					}*/
+					int index = -1;
+					if(index == -1) {
+						System.out.println("鍒嗘瀽鍏ㄩ儴dex鏂囦欢");
+						for (String dexFilePath : dexFilePaths) {
+							scope.addToScope(ClassLoaderReference.Application, DexFileModule.make(new File(dexFilePath)));
+						}
+					} else {
+						System.out.println("浠呭垎鏋愭枃浠�" + dexFilePaths.get(index));
+						scope.addToScope(ClassLoaderReference.Application, DexFileModule.make(new File(dexFilePaths.get(index))));
+					}
+				} else if(dexFilePaths.size() == 1){
+					scope.addToScope(ClassLoaderReference.Application, DexFileModule.make(new File(dexFilePaths.get(0))));
+				} else {
+					Assertions.UNREACHABLE();
 				}
 			} catch (IllegalArgumentException e) {
 				// TODO Auto-generated catch block
@@ -127,7 +177,8 @@ public class AndroidStringAnalysis implements StringAnalysis{
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			} 
+			
 		} else {
 			throw new InternalError("Support only apk format as target file");
 		}
@@ -183,6 +234,15 @@ public class AndroidStringAnalysis implements StringAnalysis{
 		
 		IClassHierarchy cha = AndroidStringAnalysisPatch.subClassOfWebViewPatch(hotspots, scope);
 		
+		/*for(IClass klass : cha) {
+			for(IMethod method : klass.getAllMethods()) {
+				HybridCFGAnalysis.hybridCache.getIR(method);
+			}
+		}
+		
+		System.out.println("寤虹珛鎵�鏈夌殑IR瀹屾垚");
+		new Scanner(System.in).nextInt();*/
+		
 		if(cg == null || pa == null){
 			Pair<CallGraph, PointerAnalysis<InstanceKey>> p = buildCG(cha);
 			cg = p.fst();
@@ -214,6 +274,14 @@ public class AndroidStringAnalysis implements StringAnalysis{
 		final Selector addJSSelector = Selector.make("addJavascriptInterface(Ljava/lang/Object;Ljava/lang/String;)V");
 		IClassHierarchy cha = cg.getClassHierarchy();
 		IClass wvClass = cha.lookupClass(wvType);
+		File file = new File(AndroidHybridAppModel.class.getClassLoader().getResource("hzqbridge.js").getFile());
+		java.io.FileWriter fw = null;
+		try {
+			fw = new java.io.FileWriter(file);
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		for(CGNode n : cg){
 			IR ir = n.getIR();
 			if(ir == null)
@@ -225,9 +293,27 @@ public class AndroidStringAnalysis implements StringAnalysis{
 					IClass receiver = cha.lookupClass(mr.getDeclaringClass());
 					if((receiver != null && (receiver.equals(wvClass) || cha.isSubclassOf(receiver, wvClass))) && mr.getSelector().equals(addJSSelector)){
 						int bridge = callInst.getUse(1);
+						int name = callInst.getUse(2);
+						String bname = null;//hzq: add
+						SymbolTable st = n.getIR().getSymbolTable();
+						if(st.isConstant(name)) {
+							bname = (String) st.getConstantValue(name);
+						} else {
+							HzqStub.stubPrint("bridge name is not constant");
+						}
 						PointerKey pk = pa.getHeapModel().getPointerKeyForLocal(n, bridge);
 						for(InstanceKey ik : pa.getPointsToSet(pk)){
 							TypeReference tr = ik.getConcreteType().getReference();
+							try {
+								
+								for(IMethod m : ik.getConcreteType().getAllMethods()) {
+									if(HzqHybridTools.isBridgeMethod(m))
+										fw.write(bname + "." + m.getName() + "();\n");
+								}
+							} catch (IOException e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
 							bi.addBridge(n, bridge, tr);
 //							for(Iterator<com.ibm.wala.util.collections.Pair<CGNode, NewSiteReference>> ip = ik.getCreationSites(cg); ip.hasNext(); ){
 //								com.ibm.wala.util.collections.Pair<CGNode, NewSiteReference> p = ip.next();
@@ -237,6 +323,12 @@ public class AndroidStringAnalysis implements StringAnalysis{
 					}
 				}
 			}
+		}
+		try {
+			fw.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
 	}
 	
@@ -308,17 +400,17 @@ public class AndroidStringAnalysis implements StringAnalysis{
 //		System.exit(-1);
 		//test-end
 		AnalysisOptions options = new AnalysisOptions();
-		IRFactory<IMethod> irFactory = new DexIRFactory();
-		AnalysisCache cache = new AnalysisCache(irFactory);
+		//IRFactory<IMethod> irFactory = new DexIRFactory();
+		//AnalysisCache cache = new AnalysisCache(irFactory);
 		options.setReflectionOptions(ReflectionOptions.FULL);//hzq: test
 		options.setAnalysisScope(scope);
-		options.setEntrypoints(getEntrypoints(cha, scope, options, cache));
+		options.setEntrypoints(getEntrypoints(cha, scope, options, HybridCFGAnalysis.hybridCache));
 		options.setSelector(new ClassHierarchyClassTargetSelector(cha));
 //		options.setSelector(new ClassHierarchyMethodTargetSelector(cha));
 		options.setSelector(new AndroidMethodTargetSelector(cha));
 //		CallGraphBuilder cgb = new nCFABuilder(0, cha, options, cache, null, null);
 //		CallGraphBuilder cgb = ZeroXCFABuilder.make(cha, options, cache, null, null, 0);
-		CallGraphBuilder<InstanceKey> cgb = ResourceCallGraphBuilder.make(cha, options, cache, null, null, 0, ara);
+		CallGraphBuilder<InstanceKey> cgb = ResourceCallGraphBuilder.make(cha, options, HybridCFGAnalysis.hybridCache, null, null, 0, ara);
 		return Pair.make(cgb.makeCallGraph(options, null), cgb.getPointerAnalysis());
 	}
 	
@@ -327,6 +419,7 @@ public class AndroidStringAnalysis implements StringAnalysis{
 		
 		if(cha.lookupClass(TypeReference.findOrCreate(ClassLoaderReference.Primordial, "Lgeneratedharness/GeneratedAndroidHarness")) == null){
 			Set<LocatorFlags> flags = HashSetFactory.make();
+			//hzq: deleted
 			flags.add(LocatorFlags.INCLUDE_CALLBACKS);
 			flags.add(LocatorFlags.EP_HEURISTIC);
 			flags.add(LocatorFlags.CB_HEURISTIC);
@@ -448,7 +541,8 @@ public class AndroidStringAnalysis implements StringAnalysis{
 				MethodReference targetMr = invokeInst.getDeclaredTarget();
 				TypeReference cTRef = targetMr.getDeclaringClass();
 				Selector mSelector = targetMr.getSelector();
-				if(cTRef.equals(argHotspot.getClassDescriptor()) && mSelector.equals(argHotspot.getMethodDescriptor()))
+				if(cTRef.equals(argHotspot.getClassDescriptor()) 
+						&& mSelector.equals(argHotspot.getMethodDescriptor()))
 					return true;
 			}
 		}

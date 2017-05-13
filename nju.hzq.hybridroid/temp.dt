@@ -1,0 +1,472 @@
+digraph "DirectedGraph" {
+graph [concentrate = true];center=true;fontsize=6;node [ color=blue,shape="box"fontsize=6,fontcolor=black,fontname=Arial];edge [ color=black,fontsize=6,fontcolor=black,fontname=Arial]; 
+   "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, <init>(Landroid/content/Context;)V > Context: Everywhere, v11]" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v5]
+via v5 = getfield < Application, Lcom/example/hybridapp1/PrivateDataGetter, contentResolver, <Application,Landroid/content/ContentResolver> > v1" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v8]
+via v8 = getfield < Application, Lcom/example/hybridapp1/PrivateDataGetter, contentResolver, <Application,Landroid/content/ContentResolver> > v1" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v11]
+via v11 = invokevirtual < Application, Landroid/content/ContentResolver, query(Landroid/net/Uri;[Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;)Landroid/database/Cursor; > v8,v7,v9,v2:#0,v2:#0,v2:#0 @18 exception:v10" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v9]
+via v9 = invokevirtual < Application, Landroid/content/ContentResolver, query(Landroid/net/Uri;[Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;)Landroid/database/Cursor; > v5,v6,v7,v2:#0,v2:#0,v2:#0 @14 exception:v8" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v13]
+via v13 = invokeinterface < Application, Landroid/database/Cursor, moveToNext()Z > v11 @24 exception:v12" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v11]
+via v11 = invokeinterface < Application, Landroid/database/Cursor, moveToNext()Z > v9 @20 exception:v10" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v16]
+via v16 = invokeinterface < Application, Landroid/database/Cursor, getString(I)Ljava/lang/String; > v11,v14:#1 @35 exception:v15" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v14]
+via v14 = invokeinterface < Application, Landroid/database/Cursor, getString(I)Ljava/lang/String; > v9,v12:#1 @31 exception:v13" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v23]
+via v23 = invokeinterface < Application, Landroid/database/Cursor, getString(I)Ljava/lang/String; > v11,v2:#0 @46 exception:v22" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v21]
+via v21 = invokeinterface < Application, Landroid/database/Cursor, getString(I)Ljava/lang/String; > v9,v2:#0 @42 exception:v20" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v16]
+via v16 = invokestatic < Application, Landroid/text/TextUtils, isEmpty(Ljava/lang/CharSequence;)Z > v14 @35 exception:v15" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v23]
+via v23 = invokestatic < Application, Landroid/util/Pair, create(Ljava/lang/Object;Ljava/lang/Object;)Landroid/util/Pair; > v21,v14 @46 exception:v22" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v18]
+via v18 = invokestatic < Application, Landroid/text/TextUtils, isEmpty(Ljava/lang/CharSequence;)Z > v16 @39 exception:v17" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v25]
+via v25 = invokestatic < Application, Landroid/util/Pair, create(Ljava/lang/Object;Ljava/lang/Object;)Landroid/util/Pair; > v23,v16 @50 exception:v24" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v27]
+via v27 = invokeinterface < Application, Ljava/util/List, add(Ljava/lang/Object;)Z > v3,v25 @54 exception:v26" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v3]
+via v27 = invokeinterface < Application, Ljava/util/List, add(Ljava/lang/Object;)Z > v3,v25 @54 exception:v26" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v25]
+via v25 = invokeinterface < Application, Ljava/util/List, add(Ljava/lang/Object;)Z > v3,v23 @50 exception:v24" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v3]
+via v25 = invokeinterface < Application, Ljava/util/List, add(Ljava/lang/Object;)Z > v3,v23 @50 exception:v24" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v4]
+via return v3" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v7]
+via return v3" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v19]
+via v19 = invokeinterface < Application, Ljava/util/List, iterator()Ljava/util/Iterator; > v4 @33 exception:v18" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v60]
+via v60 = invokeinterface < Application, Ljava/util/List, iterator()Ljava/util/Iterator; > v7 @62 exception:v59" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v64]
+via v64 = invokeinterface < Application, Ljava/util/Iterator, next()Ljava/lang/Object; > v60 @121 exception:v63" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v21]
+via v21 = invokeinterface < Application, Ljava/util/Iterator, hasNext()Z > v19 @37 exception:v20" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v24]
+via v24 = invokeinterface < Application, Ljava/util/Iterator, next()Ljava/lang/Object; > v19 @73 exception:v23" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v62]
+via v62 = invokeinterface < Application, Ljava/util/Iterator, hasNext()Z > v60 @66 exception:v61" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v65]
+via v65 = checkcast <Application,Landroid/util/Pair>v64" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v25]
+via v25 = checkcast <Application,Landroid/util/Pair>v24" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v37]
+via v37 = getfield < Application, Landroid/util/Pair, second, <Application,Ljava/lang/Object> > v25" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v70]
+via v70 = getfield < Application, Landroid/util/Pair, first, <Application,Ljava/lang/Object> > v65" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v76]
+via v76 = getfield < Application, Landroid/util/Pair, second, <Application,Ljava/lang/Object> > v65" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v30]
+via v30 = getfield < Application, Landroid/util/Pair, first, <Application,Ljava/lang/Object> > v25" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v38]
+via v38 = checkcast <Application,Ljava/lang/String>v37" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v71]
+via v71 = checkcast <Application,Ljava/lang/String>v70" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v77]
+via v77 = checkcast <Application,Ljava/lang/String>v76" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v31]
+via v31 = checkcast <Application,Ljava/lang/String>v30" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v33]
+via v33 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v26,v31 @92 exception:v32" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v66]
+via v73 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v66,v71 @140 exception:v72" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v40]
+via v40 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v36,v38 @106 exception:v39" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v73]
+via v73 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v66,v71 @140 exception:v72" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v26]
+via v33 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v26,v31 @92 exception:v32" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v79]
+via v79 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v75,v77 @154 exception:v78" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v81]
+via v81 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v79,v41:#
+ @160 exception:v80" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v36]
+via v36 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v33,v34:# :  @98 exception:v35" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v43]
+via v43 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v40,v41:#
+ @112 exception:v42" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v75]
+via v75 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v73,v34:# :  @146 exception:v74" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v83]
+via v83 = invokevirtual < Application, Ljava/lang/StringBuilder, toString()Ljava/lang/String; > v81 @164 exception:v82" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v45]
+via v45 = invokevirtual < Application, Ljava/lang/StringBuilder, toString()Ljava/lang/String; > v43 @116 exception:v44" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v84]
+via v84 = phi  v83,v58" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v46]
+via v46 = phi  v45,v17" [ ]
+   "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/confirmSomething> Context: Everywhere, v13]
+via return v84" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v68]
+via v68 = invokestatic < Application, Ljava/lang/String, valueOf(Ljava/lang/Object;)Ljava/lang/String; > v84 @129 exception:v67" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v52]
+via v52 = invokestatic < Application, Ljava/lang/String, valueOf(Ljava/lang/Object;)Ljava/lang/String; > v46 @45 exception:v51" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v28]
+via v28 = invokestatic < Application, Ljava/lang/String, valueOf(Ljava/lang/Object;)Ljava/lang/String; > v46 @81 exception:v27" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v50]
+via invokespecial < Application, Ljava/lang/StringBuilder, <init>(Ljava/lang/String;)V > v50,v52 @49 exception:v53" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyWebChromeClient, onJsConfirm(Landroid/webkit/WebView;Ljava/lang/String;Ljava/lang/String;Landroid/webkit/JsResult;)Z > Context: Everywhere, v3]
+via v15 = invoke v17@15 v19,v13 exception:v20" [ ]
+   "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/confirmSomething> Context: Everywhere, v26]
+via fieldref v26.v30:#contactInfo = v13 = v13" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyWebChromeClient, onJsConfirm(Landroid/webkit/WebView;Ljava/lang/String;Ljava/lang/String;Landroid/webkit/JsResult;)Z > Context: Everywhere, v1]
+via v7 = invokespecial < Application, Landroid/webkit/WebChromeClient, onJsConfirm(Landroid/webkit/WebView;Ljava/lang/String;Ljava/lang/String;Landroid/webkit/JsResult;)Z > v1,v2,v3,v4,v5 @0 exception:v6" [ ]
+   "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v4]
+via v21 = invoke v23:#post@24 v24:#method,v25:#none,v26 exception:v31" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v56]
+via v56 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v50,v54:#SIM卡联系人：
+ @54 exception:v55" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyWebChromeClient, onJsConfirm(Landroid/webkit/WebView;Ljava/lang/String;Ljava/lang/String;Landroid/webkit/JsResult;)Z > Context: Everywhere, v7]
+via v7 = invokespecial < Application, Landroid/webkit/WebChromeClient, onJsConfirm(Landroid/webkit/WebView;Ljava/lang/String;Ljava/lang/String;Landroid/webkit/JsResult;)Z > v1,v2,v3,v4,v5 @0 exception:v6" [ ]
+   "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v34]
+via v34 = a property name of v4" [ ]
+   "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/confirmSomething> Context: Everywhere, v15]
+via return v7:#null" [ ]
+   "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v36]
+via v36 = a property name of v4" [ ]
+   "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v58]
+via v58 = invokevirtual < Application, Ljava/lang/StringBuilder, toString()Ljava/lang/String; > v56 @58 exception:v57" [ ]
+   "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v12]
+via v12 = prototype_values(v4)" [ ]
+   "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v10]
+via v10 = phi  v36,v9" [ ]
+   "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v40]
+via fieldref v40.v43:#name = v36 = v36" [ ]
+   "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v44]
+via v44 = fieldref v12.v36" [ ]
+   "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v50]
+via v50 = dispatch v49:#appendChild@46 v19,v40 exception:v51" [ ]
+   "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v19]
+via v50 = dispatch v49:#appendChild@46 v19,v40 exception:v51" [ ]
+   "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v65]
+via v65 = dispatch v64:#submit@62 v19 exception:v66" [ ]
+   "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/confirmSomething> Context: Everywhere, v21]
+via return v19" [ ]
+   "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v8]
+via v8 = prototype_values(v19)" [ ]
+   "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v56]
+via v60 = dispatch v49:#appendChild@57 v56,v19 exception:v61" [ ]
+   "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v60]
+via v60 = dispatch v49:#appendChild@57 v56,v19 exception:v61" [ ]
+   "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v26]
+via v26 = getfield < JavaScriptLoader, LRoot, style, <JavaScriptLoader,LRoot> > v8" [ ]
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, <init>(Landroid/content/Context;)V > Context: Everywhere, v11]" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v5]
+via v5 = getfield < Application, Lcom/example/hybridapp1/PrivateDataGetter, contentResolver, <Application,Landroid/content/ContentResolver> > v1" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, <init>(Landroid/content/Context;)V > Context: Everywhere, v11]" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v8]
+via v8 = getfield < Application, Lcom/example/hybridapp1/PrivateDataGetter, contentResolver, <Application,Landroid/content/ContentResolver> > v1" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v5]
+via v5 = getfield < Application, Lcom/example/hybridapp1/PrivateDataGetter, contentResolver, <Application,Landroid/content/ContentResolver> > v1" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v9]
+via v9 = invokevirtual < Application, Landroid/content/ContentResolver, query(Landroid/net/Uri;[Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;)Landroid/database/Cursor; > v5,v6,v7,v2:#0,v2:#0,v2:#0 @14 exception:v8" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v8]
+via v8 = getfield < Application, Lcom/example/hybridapp1/PrivateDataGetter, contentResolver, <Application,Landroid/content/ContentResolver> > v1" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v11]
+via v11 = invokevirtual < Application, Landroid/content/ContentResolver, query(Landroid/net/Uri;[Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;)Landroid/database/Cursor; > v8,v7,v9,v2:#0,v2:#0,v2:#0 @18 exception:v10" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v11]
+via v11 = invokevirtual < Application, Landroid/content/ContentResolver, query(Landroid/net/Uri;[Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;)Landroid/database/Cursor; > v8,v7,v9,v2:#0,v2:#0,v2:#0 @18 exception:v10" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v13]
+via v13 = invokeinterface < Application, Landroid/database/Cursor, moveToNext()Z > v11 @24 exception:v12" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v11]
+via v11 = invokevirtual < Application, Landroid/content/ContentResolver, query(Landroid/net/Uri;[Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;)Landroid/database/Cursor; > v8,v7,v9,v2:#0,v2:#0,v2:#0 @18 exception:v10" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v16]
+via v16 = invokeinterface < Application, Landroid/database/Cursor, getString(I)Ljava/lang/String; > v11,v14:#1 @35 exception:v15" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v11]
+via v11 = invokevirtual < Application, Landroid/content/ContentResolver, query(Landroid/net/Uri;[Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;)Landroid/database/Cursor; > v8,v7,v9,v2:#0,v2:#0,v2:#0 @18 exception:v10" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v23]
+via v23 = invokeinterface < Application, Landroid/database/Cursor, getString(I)Ljava/lang/String; > v11,v2:#0 @46 exception:v22" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v9]
+via v9 = invokevirtual < Application, Landroid/content/ContentResolver, query(Landroid/net/Uri;[Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;)Landroid/database/Cursor; > v5,v6,v7,v2:#0,v2:#0,v2:#0 @14 exception:v8" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v11]
+via v11 = invokeinterface < Application, Landroid/database/Cursor, moveToNext()Z > v9 @20 exception:v10" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v9]
+via v9 = invokevirtual < Application, Landroid/content/ContentResolver, query(Landroid/net/Uri;[Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;)Landroid/database/Cursor; > v5,v6,v7,v2:#0,v2:#0,v2:#0 @14 exception:v8" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v14]
+via v14 = invokeinterface < Application, Landroid/database/Cursor, getString(I)Ljava/lang/String; > v9,v12:#1 @31 exception:v13" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v9]
+via v9 = invokevirtual < Application, Landroid/content/ContentResolver, query(Landroid/net/Uri;[Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;)Landroid/database/Cursor; > v5,v6,v7,v2:#0,v2:#0,v2:#0 @14 exception:v8" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v21]
+via v21 = invokeinterface < Application, Landroid/database/Cursor, getString(I)Ljava/lang/String; > v9,v2:#0 @42 exception:v20" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v16]
+via v16 = invokeinterface < Application, Landroid/database/Cursor, getString(I)Ljava/lang/String; > v11,v14:#1 @35 exception:v15" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v18]
+via v18 = invokestatic < Application, Landroid/text/TextUtils, isEmpty(Ljava/lang/CharSequence;)Z > v16 @39 exception:v17" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v16]
+via v16 = invokeinterface < Application, Landroid/database/Cursor, getString(I)Ljava/lang/String; > v11,v14:#1 @35 exception:v15" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v25]
+via v25 = invokestatic < Application, Landroid/util/Pair, create(Ljava/lang/Object;Ljava/lang/Object;)Landroid/util/Pair; > v23,v16 @50 exception:v24" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v14]
+via v14 = invokeinterface < Application, Landroid/database/Cursor, getString(I)Ljava/lang/String; > v9,v12:#1 @31 exception:v13" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v16]
+via v16 = invokestatic < Application, Landroid/text/TextUtils, isEmpty(Ljava/lang/CharSequence;)Z > v14 @35 exception:v15" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v14]
+via v14 = invokeinterface < Application, Landroid/database/Cursor, getString(I)Ljava/lang/String; > v9,v12:#1 @31 exception:v13" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v23]
+via v23 = invokestatic < Application, Landroid/util/Pair, create(Ljava/lang/Object;Ljava/lang/Object;)Landroid/util/Pair; > v21,v14 @46 exception:v22" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v23]
+via v23 = invokeinterface < Application, Landroid/database/Cursor, getString(I)Ljava/lang/String; > v11,v2:#0 @46 exception:v22" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v25]
+via v25 = invokestatic < Application, Landroid/util/Pair, create(Ljava/lang/Object;Ljava/lang/Object;)Landroid/util/Pair; > v23,v16 @50 exception:v24" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v21]
+via v21 = invokeinterface < Application, Landroid/database/Cursor, getString(I)Ljava/lang/String; > v9,v2:#0 @42 exception:v20" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v23]
+via v23 = invokestatic < Application, Landroid/util/Pair, create(Ljava/lang/Object;Ljava/lang/Object;)Landroid/util/Pair; > v21,v14 @46 exception:v22" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v23]
+via v23 = invokestatic < Application, Landroid/util/Pair, create(Ljava/lang/Object;Ljava/lang/Object;)Landroid/util/Pair; > v21,v14 @46 exception:v22" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v25]
+via v25 = invokeinterface < Application, Ljava/util/List, add(Ljava/lang/Object;)Z > v3,v23 @50 exception:v24" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v23]
+via v23 = invokestatic < Application, Landroid/util/Pair, create(Ljava/lang/Object;Ljava/lang/Object;)Landroid/util/Pair; > v21,v14 @46 exception:v22" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v3]
+via v25 = invokeinterface < Application, Ljava/util/List, add(Ljava/lang/Object;)Z > v3,v23 @50 exception:v24" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v25]
+via v25 = invokestatic < Application, Landroid/util/Pair, create(Ljava/lang/Object;Ljava/lang/Object;)Landroid/util/Pair; > v23,v16 @50 exception:v24" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v27]
+via v27 = invokeinterface < Application, Ljava/util/List, add(Ljava/lang/Object;)Z > v3,v25 @54 exception:v26" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v25]
+via v25 = invokestatic < Application, Landroid/util/Pair, create(Ljava/lang/Object;Ljava/lang/Object;)Landroid/util/Pair; > v23,v16 @50 exception:v24" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v3]
+via v27 = invokeinterface < Application, Ljava/util/List, add(Ljava/lang/Object;)Z > v3,v25 @54 exception:v26" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v3]
+via v27 = invokeinterface < Application, Ljava/util/List, add(Ljava/lang/Object;)Z > v3,v25 @54 exception:v26" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v27]
+via v27 = invokeinterface < Application, Ljava/util/List, add(Ljava/lang/Object;)Z > v3,v25 @54 exception:v26" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getSIMContacts()Ljava/util/List; > Context: Everywhere, v3]
+via v27 = invokeinterface < Application, Ljava/util/List, add(Ljava/lang/Object;)Z > v3,v25 @54 exception:v26" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v7]
+via return v3" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v3]
+via v25 = invokeinterface < Application, Ljava/util/List, add(Ljava/lang/Object;)Z > v3,v23 @50 exception:v24" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v4]
+via return v3" 
+ "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v3]
+via v25 = invokeinterface < Application, Ljava/util/List, add(Ljava/lang/Object;)Z > v3,v23 @50 exception:v24" -> "[Node: < Application, Lcom/example/hybridapp1/PrivateDataGetter, getPhoneContacts()Ljava/util/List; > Context: Everywhere, v25]
+via v25 = invokeinterface < Application, Ljava/util/List, add(Ljava/lang/Object;)Z > v3,v23 @50 exception:v24" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v4]
+via return v3" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v19]
+via v19 = invokeinterface < Application, Ljava/util/List, iterator()Ljava/util/Iterator; > v4 @33 exception:v18" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v7]
+via return v3" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v60]
+via v60 = invokeinterface < Application, Ljava/util/List, iterator()Ljava/util/Iterator; > v7 @62 exception:v59" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v19]
+via v19 = invokeinterface < Application, Ljava/util/List, iterator()Ljava/util/Iterator; > v4 @33 exception:v18" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v21]
+via v21 = invokeinterface < Application, Ljava/util/Iterator, hasNext()Z > v19 @37 exception:v20" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v19]
+via v19 = invokeinterface < Application, Ljava/util/List, iterator()Ljava/util/Iterator; > v4 @33 exception:v18" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v24]
+via v24 = invokeinterface < Application, Ljava/util/Iterator, next()Ljava/lang/Object; > v19 @73 exception:v23" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v60]
+via v60 = invokeinterface < Application, Ljava/util/List, iterator()Ljava/util/Iterator; > v7 @62 exception:v59" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v64]
+via v64 = invokeinterface < Application, Ljava/util/Iterator, next()Ljava/lang/Object; > v60 @121 exception:v63" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v60]
+via v60 = invokeinterface < Application, Ljava/util/List, iterator()Ljava/util/Iterator; > v7 @62 exception:v59" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v62]
+via v62 = invokeinterface < Application, Ljava/util/Iterator, hasNext()Z > v60 @66 exception:v61" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v64]
+via v64 = invokeinterface < Application, Ljava/util/Iterator, next()Ljava/lang/Object; > v60 @121 exception:v63" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v65]
+via v65 = checkcast <Application,Landroid/util/Pair>v64" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v24]
+via v24 = invokeinterface < Application, Ljava/util/Iterator, next()Ljava/lang/Object; > v19 @73 exception:v23" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v25]
+via v25 = checkcast <Application,Landroid/util/Pair>v24" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v65]
+via v65 = checkcast <Application,Landroid/util/Pair>v64" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v70]
+via v70 = getfield < Application, Landroid/util/Pair, first, <Application,Ljava/lang/Object> > v65" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v65]
+via v65 = checkcast <Application,Landroid/util/Pair>v64" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v76]
+via v76 = getfield < Application, Landroid/util/Pair, second, <Application,Ljava/lang/Object> > v65" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v25]
+via v25 = checkcast <Application,Landroid/util/Pair>v24" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v37]
+via v37 = getfield < Application, Landroid/util/Pair, second, <Application,Ljava/lang/Object> > v25" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v25]
+via v25 = checkcast <Application,Landroid/util/Pair>v24" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v30]
+via v30 = getfield < Application, Landroid/util/Pair, first, <Application,Ljava/lang/Object> > v25" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v37]
+via v37 = getfield < Application, Landroid/util/Pair, second, <Application,Ljava/lang/Object> > v25" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v38]
+via v38 = checkcast <Application,Ljava/lang/String>v37" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v70]
+via v70 = getfield < Application, Landroid/util/Pair, first, <Application,Ljava/lang/Object> > v65" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v71]
+via v71 = checkcast <Application,Ljava/lang/String>v70" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v76]
+via v76 = getfield < Application, Landroid/util/Pair, second, <Application,Ljava/lang/Object> > v65" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v77]
+via v77 = checkcast <Application,Ljava/lang/String>v76" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v30]
+via v30 = getfield < Application, Landroid/util/Pair, first, <Application,Ljava/lang/Object> > v25" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v31]
+via v31 = checkcast <Application,Ljava/lang/String>v30" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v38]
+via v38 = checkcast <Application,Ljava/lang/String>v37" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v40]
+via v40 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v36,v38 @106 exception:v39" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v71]
+via v71 = checkcast <Application,Ljava/lang/String>v70" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v66]
+via v73 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v66,v71 @140 exception:v72" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v71]
+via v71 = checkcast <Application,Ljava/lang/String>v70" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v73]
+via v73 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v66,v71 @140 exception:v72" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v77]
+via v77 = checkcast <Application,Ljava/lang/String>v76" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v79]
+via v79 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v75,v77 @154 exception:v78" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v31]
+via v31 = checkcast <Application,Ljava/lang/String>v30" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v33]
+via v33 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v26,v31 @92 exception:v32" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v31]
+via v31 = checkcast <Application,Ljava/lang/String>v30" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v26]
+via v33 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v26,v31 @92 exception:v32" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v33]
+via v33 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v26,v31 @92 exception:v32" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v36]
+via v36 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v33,v34:# :  @98 exception:v35" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v66]
+via v73 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v66,v71 @140 exception:v72" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v73]
+via v73 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v66,v71 @140 exception:v72" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v40]
+via v40 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v36,v38 @106 exception:v39" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v43]
+via v43 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v40,v41:#
+ @112 exception:v42" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v73]
+via v73 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v66,v71 @140 exception:v72" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v75]
+via v75 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v73,v34:# :  @146 exception:v74" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v26]
+via v33 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v26,v31 @92 exception:v32" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v33]
+via v33 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v26,v31 @92 exception:v32" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v79]
+via v79 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v75,v77 @154 exception:v78" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v81]
+via v81 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v79,v41:#
+ @160 exception:v80" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v81]
+via v81 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v79,v41:#
+ @160 exception:v80" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v83]
+via v83 = invokevirtual < Application, Ljava/lang/StringBuilder, toString()Ljava/lang/String; > v81 @164 exception:v82" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v36]
+via v36 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v33,v34:# :  @98 exception:v35" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v40]
+via v40 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v36,v38 @106 exception:v39" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v43]
+via v43 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v40,v41:#
+ @112 exception:v42" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v45]
+via v45 = invokevirtual < Application, Ljava/lang/StringBuilder, toString()Ljava/lang/String; > v43 @116 exception:v44" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v75]
+via v75 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v73,v34:# :  @146 exception:v74" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v79]
+via v79 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v75,v77 @154 exception:v78" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v83]
+via v83 = invokevirtual < Application, Ljava/lang/StringBuilder, toString()Ljava/lang/String; > v81 @164 exception:v82" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v84]
+via v84 = phi  v83,v58" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v45]
+via v45 = invokevirtual < Application, Ljava/lang/StringBuilder, toString()Ljava/lang/String; > v43 @116 exception:v44" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v46]
+via v46 = phi  v45,v17" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v84]
+via v84 = phi  v83,v58" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/confirmSomething> Context: Everywhere, v13]
+via return v84" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v84]
+via v84 = phi  v83,v58" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v68]
+via v68 = invokestatic < Application, Ljava/lang/String, valueOf(Ljava/lang/Object;)Ljava/lang/String; > v84 @129 exception:v67" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v46]
+via v46 = phi  v45,v17" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v52]
+via v52 = invokestatic < Application, Ljava/lang/String, valueOf(Ljava/lang/Object;)Ljava/lang/String; > v46 @45 exception:v51" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v46]
+via v46 = phi  v45,v17" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v28]
+via v28 = invokestatic < Application, Ljava/lang/String, valueOf(Ljava/lang/Object;)Ljava/lang/String; > v46 @81 exception:v27" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/confirmSomething> Context: Everywhere, v13]
+via return v84" -> "[Node: < Application, Lcom/example/hybridapp1/MyWebChromeClient, onJsConfirm(Landroid/webkit/WebView;Ljava/lang/String;Ljava/lang/String;Landroid/webkit/JsResult;)Z > Context: Everywhere, v3]
+via v15 = invoke v17@15 v19,v13 exception:v20" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/confirmSomething> Context: Everywhere, v13]
+via return v84" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/confirmSomething> Context: Everywhere, v26]
+via fieldref v26.v30:#contactInfo = v13 = v13" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v68]
+via v68 = invokestatic < Application, Ljava/lang/String, valueOf(Ljava/lang/Object;)Ljava/lang/String; > v84 @129 exception:v67" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v66]
+via invokespecial < Application, Ljava/lang/StringBuilder, <init>(Ljava/lang/String;)V > v66,v68 @133 exception:v69" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v52]
+via v52 = invokestatic < Application, Ljava/lang/String, valueOf(Ljava/lang/Object;)Ljava/lang/String; > v46 @45 exception:v51" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v50]
+via invokespecial < Application, Ljava/lang/StringBuilder, <init>(Ljava/lang/String;)V > v50,v52 @49 exception:v53" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v28]
+via v28 = invokestatic < Application, Ljava/lang/String, valueOf(Ljava/lang/Object;)Ljava/lang/String; > v46 @81 exception:v27" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v26]
+via invokespecial < Application, Ljava/lang/StringBuilder, <init>(Ljava/lang/String;)V > v26,v28 @85 exception:v29" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v50]
+via invokespecial < Application, Ljava/lang/StringBuilder, <init>(Ljava/lang/String;)V > v50,v52 @49 exception:v53" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v56]
+via v56 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v50,v54:#SIM卡联系人：
+ @54 exception:v55" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyWebChromeClient, onJsConfirm(Landroid/webkit/WebView;Ljava/lang/String;Ljava/lang/String;Landroid/webkit/JsResult;)Z > Context: Everywhere, v3]
+via v15 = invoke v17@15 v19,v13 exception:v20" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/confirmSomething> Context: Everywhere, v13]
+via Parameter" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyWebChromeClient, onJsConfirm(Landroid/webkit/WebView;Ljava/lang/String;Ljava/lang/String;Landroid/webkit/JsResult;)Z > Context: Everywhere, v3]
+via v15 = invoke v17@15 v19,v13 exception:v20" -> "[Node: < Application, Lcom/example/hybridapp1/MyWebChromeClient, onJsConfirm(Landroid/webkit/WebView;Ljava/lang/String;Ljava/lang/String;Landroid/webkit/JsResult;)Z > Context: Everywhere, v1]
+via v7 = invokespecial < Application, Landroid/webkit/WebChromeClient, onJsConfirm(Landroid/webkit/WebView;Ljava/lang/String;Ljava/lang/String;Landroid/webkit/JsResult;)Z > v1,v2,v3,v4,v5 @0 exception:v6" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyWebChromeClient, onJsConfirm(Landroid/webkit/WebView;Ljava/lang/String;Ljava/lang/String;Landroid/webkit/JsResult;)Z > Context: Everywhere, v3]
+via v15 = invoke v17@15 v19,v13 exception:v20" -> "[Node: < Application, Lcom/example/hybridapp1/MyWebChromeClient, onJsConfirm(Landroid/webkit/WebView;Ljava/lang/String;Ljava/lang/String;Landroid/webkit/JsResult;)Z > Context: Everywhere, v7]
+via v7 = invokespecial < Application, Landroid/webkit/WebChromeClient, onJsConfirm(Landroid/webkit/WebView;Ljava/lang/String;Ljava/lang/String;Landroid/webkit/JsResult;)Z > v1,v2,v3,v4,v5 @0 exception:v6" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/confirmSomething> Context: Everywhere, v26]
+via fieldref v26.v30:#contactInfo = v13 = v13" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v4]
+via v21 = invoke v23:#post@24 v24:#method,v25:#none,v26 exception:v31" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/confirmSomething> Context: Everywhere, v26]
+via fieldref v26.v30:#contactInfo = v13 = v13" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/confirmSomething> Context: Everywhere, v26]
+via fieldref v26.v30:#contactInfo = v13 = v13" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyWebChromeClient, onJsConfirm(Landroid/webkit/WebView;Ljava/lang/String;Ljava/lang/String;Landroid/webkit/JsResult;)Z > Context: Everywhere, v1]
+via v7 = invokespecial < Application, Landroid/webkit/WebChromeClient, onJsConfirm(Landroid/webkit/WebView;Ljava/lang/String;Ljava/lang/String;Landroid/webkit/JsResult;)Z > v1,v2,v3,v4,v5 @0 exception:v6" -> "[Node: < Application, Lcom/example/hybridapp1/MyWebChromeClient, onJsConfirm(Landroid/webkit/WebView;Ljava/lang/String;Ljava/lang/String;Landroid/webkit/JsResult;)Z > Context: Everywhere, v7]
+via v7 = invokespecial < Application, Landroid/webkit/WebChromeClient, onJsConfirm(Landroid/webkit/WebView;Ljava/lang/String;Ljava/lang/String;Landroid/webkit/JsResult;)Z > v1,v2,v3,v4,v5 @0 exception:v6" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v4]
+via v21 = invoke v23:#post@24 v24:#method,v25:#none,v26 exception:v31" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v34]
+via v34 = a property name of v4" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v4]
+via v21 = invoke v23:#post@24 v24:#method,v25:#none,v26 exception:v31" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v36]
+via v36 = a property name of v4" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v4]
+via v21 = invoke v23:#post@24 v24:#method,v25:#none,v26 exception:v31" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/confirmSomething> Context: Everywhere, v26]
+via Parameter" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v4]
+via v21 = invoke v23:#post@24 v24:#method,v25:#none,v26 exception:v31" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v12]
+via v12 = prototype_values(v4)" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v56]
+via v56 = invokevirtual < Application, Ljava/lang/StringBuilder, append(Ljava/lang/String;)Ljava/lang/StringBuilder; > v50,v54:#SIM卡联系人：
+ @54 exception:v55" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v58]
+via v58 = invokevirtual < Application, Ljava/lang/StringBuilder, toString()Ljava/lang/String; > v56 @58 exception:v57" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyWebChromeClient, onJsConfirm(Landroid/webkit/WebView;Ljava/lang/String;Ljava/lang/String;Landroid/webkit/JsResult;)Z > Context: Everywhere, v7]
+via v7 = invokespecial < Application, Landroid/webkit/WebChromeClient, onJsConfirm(Landroid/webkit/WebView;Ljava/lang/String;Ljava/lang/String;Landroid/webkit/JsResult;)Z > v1,v2,v3,v4,v5 @0 exception:v6" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/confirmSomething> Context: Everywhere, v15]
+via return v7:#null" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v36]
+via v36 = a property name of v4" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v10]
+via v10 = phi  v36,v9" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v36]
+via v36 = a property name of v4" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v40]
+via fieldref v40.v43:#name = v36 = v36" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v36]
+via v36 = a property name of v4" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v44]
+via v44 = fieldref v12.v36" 
+ "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v58]
+via v58 = invokevirtual < Application, Ljava/lang/StringBuilder, toString()Ljava/lang/String; > v56 @58 exception:v57" -> "[Node: < Application, Lcom/example/hybridapp1/MyJSBridge, getContactsInfo()Ljava/lang/String; > Context: Everywhere, v84]
+via v84 = phi  v83,v58" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v12]
+via v12 = prototype_values(v4)" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v44]
+via v44 = fieldref v12.v36" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v10]
+via v10 = phi  v36,v9" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v34]
+via v34 = a property name of v4" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v10]
+via v10 = phi  v36,v9" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v36]
+via v36 = a property name of v4" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v40]
+via fieldref v40.v43:#name = v36 = v36" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v50]
+via v50 = dispatch v49:#appendChild@46 v19,v40 exception:v51" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v40]
+via fieldref v40.v43:#name = v36 = v36" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v19]
+via v50 = dispatch v49:#appendChild@46 v19,v40 exception:v51" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v40]
+via fieldref v40.v43:#name = v36 = v36" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v40]
+via fieldref v40.v43:#name = v36 = v36" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v44]
+via v44 = fieldref v12.v36" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v40]
+via fieldref v40.v46:#value = v44 = v44" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v19]
+via v50 = dispatch v49:#appendChild@46 v19,v40 exception:v51" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v50]
+via v50 = dispatch v49:#appendChild@46 v19,v40 exception:v51" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v19]
+via v50 = dispatch v49:#appendChild@46 v19,v40 exception:v51" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v65]
+via v65 = dispatch v64:#submit@62 v19 exception:v66" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v19]
+via v50 = dispatch v49:#appendChild@46 v19,v40 exception:v51" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v19]
+via fieldref v19.v22:#action = v3 = v3" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v19]
+via v50 = dispatch v49:#appendChild@46 v19,v40 exception:v51" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/confirmSomething> Context: Everywhere, v21]
+via return v19" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v19]
+via v50 = dispatch v49:#appendChild@46 v19,v40 exception:v51" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v8]
+via v8 = prototype_values(v19)" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v19]
+via v50 = dispatch v49:#appendChild@46 v19,v40 exception:v51" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v56]
+via v60 = dispatch v49:#appendChild@57 v56,v19 exception:v61" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v19]
+via v50 = dispatch v49:#appendChild@46 v19,v40 exception:v51" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v60]
+via v60 = dispatch v49:#appendChild@57 v56,v19 exception:v61" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v8]
+via v8 = prototype_values(v19)" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v26]
+via v26 = getfield < JavaScriptLoader, LRoot, style, <JavaScriptLoader,LRoot> > v8" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v56]
+via v60 = dispatch v49:#appendChild@57 v56,v19 exception:v61" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v56]
+via v56 = getfield < JavaScriptLoader, LRoot, body, <JavaScriptLoader,LRoot> > v14" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v56]
+via v60 = dispatch v49:#appendChild@57 v56,v19 exception:v61" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v60]
+via v60 = dispatch v49:#appendChild@57 v56,v19 exception:v61" 
+ "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v26]
+via v26 = getfield < JavaScriptLoader, LRoot, style, <JavaScriptLoader,LRoot> > v8" -> "[Node: <Code body of function L/C:/Users/hzq/AppData/Local/Temp/index.html3599094876592626527.js/__WINDOW_MAIN__/post> Context: Everywhere, v26]
+via v26 = getfield < JavaScriptLoader, LRoot, style, <JavaScriptLoader,LRoot> > v8" 
+
+}

@@ -108,6 +108,7 @@ public class AnalysisScopeBuilder {
 		
 		return new AnalysisScopeBuilder("", target, jsFiles);
 	}
+	
 		
 	public AndroidHybridAnalysisScope makeScope(String libPath) throws IOException{
 			return AndroidHybridAnalysisScope.setUpAndroidHybridAnalysisScope(dir, target.toURI(), htmls, 

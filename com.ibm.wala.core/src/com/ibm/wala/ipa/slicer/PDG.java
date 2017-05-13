@@ -154,7 +154,7 @@ public class PDG<T extends InstanceKey> implements NumberedGraph<Statement> {
     }
     this.cg = cg;
     this.node = node;
-    this.heapModel = pa != null? modRef.makeHeapModel(pa): null;
+    this.heapModel = pa != null? modRef.makeHeapModel(pa, node): null;
     this.pa = pa;
     this.dOptions = dOptions;
     this.cOptions = cOptions;

@@ -33,6 +33,7 @@ import kr.ac.kaist.wala.hybridroid.analysis.resource.AndroidResourceAnalysis.Res
 import kr.ac.kaist.wala.hybridroid.pointer.ResourceInstanceKey;
 import kr.ac.kaist.wala.hybridroid.types.HybriDroidTypes;
 import kr.ac.kaist.wala.hybridroid.utils.Wrapper;
+import nju.hzq.stub.HzqStub;
 
 import java.util.HashMap;
 import java.util.Map;

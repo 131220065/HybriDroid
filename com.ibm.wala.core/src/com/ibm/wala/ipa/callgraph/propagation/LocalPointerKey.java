@@ -16,9 +16,9 @@ import com.ibm.wala.ipa.callgraph.CGNode;
  * A pointer key which provides a unique set for each local in each call graph node.
  */
 public class LocalPointerKey extends AbstractLocalPointerKey {
-  private final CGNode node;
+  protected final CGNode node;
 
-  private final int valueNumber;
+  protected final int valueNumber;
 
   public LocalPointerKey(CGNode node, int valueNumber) {
     super();

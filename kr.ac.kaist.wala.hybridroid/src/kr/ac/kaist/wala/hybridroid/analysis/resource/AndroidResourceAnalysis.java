@@ -24,6 +24,8 @@ import java.util.Set;
 
 import com.ibm.wala.util.debug.Assertions;
 
+import nju.hzq.stub.HzqStub;
+
 
 public class AndroidResourceAnalysis {
 	
@@ -115,6 +117,7 @@ public class AndroidResourceAnalysis {
 			rRes.putAll(sp.parseResource(r));
 		}
 		
+		HzqStub.stubModified("deleted below");
 		XMLStringResourceReader xsrr = new XMLStringResourceReader();
 		
 		for(File f : valueDirs){

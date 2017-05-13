@@ -128,7 +128,7 @@ public class ModRef<T extends InstanceKey> {
     });
   }
 
-  public ExtendedHeapModel makeHeapModel(PointerAnalysis<T> pa) {
+  public ExtendedHeapModel makeHeapModel(PointerAnalysis<T> pa, CGNode n) { //hzq: change
     return new DelegatingExtendedHeapModel(pa.getHeapModel());
   }
   /**
@@ -139,7 +139,7 @@ public class ModRef<T extends InstanceKey> {
    */
   private Collection<PointerKey> scanNodeForMod(final CGNode n, final PointerAnalysis<T> pa, HeapExclusions heapExclude) {
     Collection<PointerKey> result = HashSetFactory.make();
-    final ExtendedHeapModel h = makeHeapModel(pa);
+    final ExtendedHeapModel h = makeHeapModel(pa, n);
     SSAInstruction.Visitor v = makeModVisitor(n, result, pa, h);
     IR ir = n.getIR();
     if (ir != null) {
@@ -160,7 +160,7 @@ public class ModRef<T extends InstanceKey> {
    */
   private Collection<PointerKey> scanNodeForRef(final CGNode n, final PointerAnalysis<T> pa, HeapExclusions heapExclude) {
     Collection<PointerKey> result = HashSetFactory.make();
-    final ExtendedHeapModel h = makeHeapModel(pa);
+    final ExtendedHeapModel h = makeHeapModel(pa, n);
     SSAInstruction.Visitor v = makeRefVisitor(n, result, pa, h);
     IR ir = n.getIR();
     if (ir != null) {
@@ -384,5 +384,7 @@ public class ModRef<T extends InstanceKey> {
     s.visit(v);
     return hexcl == null ? result : hexcl.filter(result);
   }
+  
+  
 
 }

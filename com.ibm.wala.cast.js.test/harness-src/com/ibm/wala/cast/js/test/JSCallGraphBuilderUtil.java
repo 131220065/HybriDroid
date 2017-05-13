@@ -33,7 +33,6 @@ import com.ibm.wala.cast.js.ipa.callgraph.PropertyNameContextSelector;
 import com.ibm.wala.cast.js.ipa.callgraph.correlations.extraction.CorrelatedPairExtractorFactory;
 import com.ibm.wala.cast.js.loader.JavaScriptLoader;
 import com.ibm.wala.cast.js.loader.JavaScriptLoaderFactory;
-import com.ibm.wala.cast.js.test.JSCallGraphBuilderUtil.CGBuilderType;
 import com.ibm.wala.cast.loader.CAstAbstractLoader;
 import com.ibm.wala.cast.tree.rewrite.CAstRewriterFactory;
 import com.ibm.wala.classLoader.IMethod;
@@ -43,6 +42,8 @@ import com.ibm.wala.ipa.callgraph.AnalysisCache;
 import com.ibm.wala.ipa.callgraph.AnalysisScope;
 import com.ibm.wala.ipa.callgraph.CallGraph;
 import com.ibm.wala.ipa.callgraph.Entrypoint;
+import com.ibm.wala.ipa.callgraph.propagation.InstanceKey;
+import com.ibm.wala.ipa.callgraph.propagation.PointerAnalysis;
 import com.ibm.wala.ipa.callgraph.propagation.PropagationCallGraphBuilder;
 import com.ibm.wala.ipa.callgraph.propagation.cfa.ZeroXInstanceKeys;
 import com.ibm.wala.ipa.cha.ClassHierarchyException;
@@ -51,6 +52,7 @@ import com.ibm.wala.ssa.IRFactory;
 import com.ibm.wala.util.CancelException;
 import com.ibm.wala.util.WalaException;
 import com.ibm.wala.util.collections.HashSetFactory;
+import com.ibm.wala.util.collections.Pair;
 import com.ibm.wala.util.functions.Function;
 import com.ibm.wala.util.io.FileProvider;
 
@@ -250,6 +252,14 @@ public class JSCallGraphBuilderUtil extends com.ibm.wala.cast.js.ipa.callgraph.J
 
   public static CallGraph makeHTMLCG(URL url) throws IllegalArgumentException, IOException, CancelException, WalaException {
     return makeHTMLCG(url, DefaultSourceExtractor.factory);
+  }
+  
+  
+  public static Pair<CallGraph, PointerAnalysis<InstanceKey>> makeHTMLCGPA(URL url) throws IOException, WalaException, IllegalArgumentException, CancelException {
+    PropagationCallGraphBuilder b = makeHTMLCGBuilder(url, DefaultSourceExtractor.factory);
+    CallGraph CG = b.makeCallGraph(b.getOptions());
+    dumpCG(b.getPointerAnalysis(), CG);
+    return Pair.make(CG, b.getPointerAnalysis());
   }
 
   public static JSCFABuilder makeHTMLCGBuilder(URL url) throws IOException, WalaException {

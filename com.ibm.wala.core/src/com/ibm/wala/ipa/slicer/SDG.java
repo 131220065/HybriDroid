@@ -46,6 +46,10 @@ import com.ibm.wala.util.intset.IntSet;
 import com.ibm.wala.util.intset.MutableSparseIntSet;
 import com.ibm.wala.util.intset.OrdinalSet;
 
+import nju.hzq.patch.HybridCallBackResult;
+import nju.hzq.stub.HzqStub;
+import nju.hzq.tool.HybridCallGraphTool;
+
 /**
  * System dependence graph.
  * 
@@ -379,6 +383,23 @@ public class SDG<T extends InstanceKey> extends AbstractNumberedGraph<Statement>
               for (IntIterator ii = indices.intIterator(); ii.hasNext();) {
                 int i = ii.next();
                 SSAAbstractInvokeInstruction call = (SSAAbstractInvokeInstruction) ir.getInstructions()[i];
+                
+                HzqStub.stubModified("bridge and callback");
+                if(HybridCallGraphTool.isJavaNode(N.getNode()) && !HybridCallGraphTool.isJavaNode(caller)) {
+                  if(HybridCallBackResult.callbackResult != null && 
+                      N.getNode().getClassHierarchy().isSubclassOf(N.getNode().getMethod().getDeclaringClass()
+                          , HybridCallBackResult.callbackResult.webChromeClient)) {
+                    if(parameterIndex != 2) {
+                      continue;
+                    }
+                  } else {
+                    //bridge
+                    if(parameterIndex == 0) {
+                      continue;
+                    }
+                    parameterIndex ++;
+                  }
+                }
                 int p = call.getUse(parameterIndex);
                 Statement s = new ParamCaller(caller, i, p);
                 addNode(s);
@@ -558,6 +579,17 @@ public class SDG<T extends InstanceKey> extends AbstractNumberedGraph<Statement>
         if (!dOptions.equals(DataDependenceOptions.NONE)) {
           // data dependence successors
           for (CGNode t : cg.getPossibleTargets(N.getNode(), call.getCallSite())) {
+            HzqStub.stubPrint("call.class = " + call.getClass());
+            if(HybridCallBackResult.callbackResult != null && 
+                t.getClassHierarchy().isSubclassOf(t.getMethod().getDeclaringClass()
+                    , HybridCallBackResult.callbackResult.webChromeClient)) {
+              if(call.getUse(2) == pac.getValueNumber()) {
+                Statement s = new ParamCallee(t, 2 + 1);
+                addNode(s);
+                result.add(s);
+              }
+              continue;
+            }
             for (int i = 0; i < t.getMethod().getNumberOfParameters(); i++) {
               if (dOptions.isTerminateAtCast() && call.isDispatch() && pac.getValueNumber() == call.getReceiver()) {
                 // a virtual dispatch is just like a cast.
@@ -567,10 +599,20 @@ public class SDG<T extends InstanceKey> extends AbstractNumberedGraph<Statement>
                 // don't track reflection into reflective invokes
                 continue;
               }
+
               if (call.getUse(i) == pac.getValueNumber()) {
+                HzqStub.stubModified("bridge method deal");
+                if(HybridCallGraphTool.isJavaNode(t) && !HybridCallGraphTool.isJavaNode(N.getNode())) {
+                  //call back dealed, so this is bridge method
+                  if(i < 2) {
+                    continue;
+                  }
+                  i --;
+                }
                 Statement s = new ParamCallee(t, i + 1);
                 addNode(s);
                 result.add(s);
+                break;
               }
             }
           }

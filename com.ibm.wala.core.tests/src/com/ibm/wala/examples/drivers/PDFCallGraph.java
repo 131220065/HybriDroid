@@ -104,11 +104,11 @@ public class PDFCallGraph {
     return run(p.getProperty("appJar"), p.getProperty("exclusionFile", CallGraphTestUtil.REGRESSION_EXCLUSIONS));
   }
   
-  public static Process run(CallGraph cg) {
+  public static Process runCallGraph(CallGraph cg) {
     Graph<CGNode> g;
     try {
       g = pruneForAppLoader(cg);
-      return runCGNodeGraph(g);
+      return runGraph(g);
     } catch (WalaException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -117,7 +117,7 @@ public class PDFCallGraph {
     
   }
 
-  public static Process runCGNodeGraph(Graph<CGNode> g) {
+  public static Process runGraph(Graph g) {
     try {
       Properties p = null;
       try {
@@ -149,7 +149,7 @@ public class PDFCallGraph {
   public static Process run(String appJar, String exclusionFile) throws IllegalArgumentException, CancelException {
     try {
       Graph<CGNode> g = buildPrunedCallGraph(appJar, (new FileProvider()).getFile(exclusionFile));
-      return runCGNodeGraph(g);
+      return runGraph(g);
     } catch (Exception e) {
       e.printStackTrace();
       return null;

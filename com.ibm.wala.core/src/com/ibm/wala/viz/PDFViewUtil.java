@@ -115,7 +115,7 @@ public class PDFViewUtil {
 
     int start = bb.getFirstInstructionIndex();
     int end = bb.getLastInstructionIndex();
-    result.append("BB").append(bb.getNumber());
+    result.append("BB").append(bb.getNumber()).append(" [ " + bb.getFirstInstructionIndex() + "-" + bb.getLastInstructionIndex() + " ]");
     if (bb.isEntryBlock()) {
       result.append(" (en)\\n");
     } else if (bb.isExitBlock()) {

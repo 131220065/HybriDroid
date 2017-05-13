@@ -10,13 +10,15 @@
  *******************************************************************************/
 package kr.ac.kaist.wala.hybridroid.util.debug;
 
+import nju.hzq.stub.HzqStub;
+
 public class Debug {
 	public static void setDebuggable(Object o, boolean t){
 		
 	}
 	
 	public static void printMsg(String s){
-		
+		HzqStub.stubPrint(s);
 	}
 	
 	public static void temporaryStop(){

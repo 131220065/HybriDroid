@@ -110,8 +110,12 @@ public class XMLStringResourceReader {
 					if(resName == null || resValue == null || resValue.equals(""))
 						throw new InternalError("string resource must have name and value.");
 					//remove white space before real string value
-					resValue = resValue.replace("\n", "");
-					resValue = resValue.substring(4, resValue.length());
+					
+					//resValue = resValue.replace("\n", "");\
+					resValue = resValue.replaceAll("\n", " ").trim();//hzq: add
+					
+					if(resValue.length() > 4) //hzq: add
+						resValue = resValue.substring(4, resValue.length());
 					
 					resourceMap.put(resName, resValue);
 					resName = null;

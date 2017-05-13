@@ -171,4 +171,14 @@ public class JavaScriptModRef<T extends InstanceKey> extends AstModRef<T> {
   protected ModVisitor makeModVisitor(CGNode n, Collection<PointerKey> result, PointerAnalysis<T> pa, ExtendedHeapModel h, boolean ignoreAllocHeapDefs) {
     return new JavaScriptModVisitor<T>(n, result, h, pa);
   }
+  
+  //hzq: add start
+  public ModVisitor makeModVisitorPublic(CGNode n, Collection<PointerKey> result, PointerAnalysis<T> pa, ExtendedHeapModel h, boolean ignoreAllocHeapDefs) {
+    return new JavaScriptModVisitor<T>(n, result, h, pa);
+  }
+  
+  public RefVisitor makeRefVisitorPublic(CGNode n, Collection<PointerKey> result, PointerAnalysis<T> pa, ExtendedHeapModel h) {
+    return new JavaScriptRefVisitor(n, result, pa, h);
+  }
+  //hzq: add end
 }

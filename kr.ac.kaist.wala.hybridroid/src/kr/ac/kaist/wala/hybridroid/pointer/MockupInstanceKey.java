@@ -26,7 +26,7 @@ public final class MockupInstanceKey implements InstanceKey {
 	public MockupInstanceKey(IMethod method){
 		this.mockupClass = MockupClass.findOrCreateMockup(method);
 	}
-	
+
 	@Override
 	public IClass getConcreteType() {
 		// TODO Auto-generated method stub

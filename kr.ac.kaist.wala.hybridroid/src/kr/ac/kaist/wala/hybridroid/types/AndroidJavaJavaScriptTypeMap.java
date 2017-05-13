@@ -119,6 +119,10 @@ public class AndroidJavaJavaScriptTypeMap {
 	public static TypeReference java2JsTypeConvert(TypeReference javaTr){
 		TypeReference jsTr = null;
 		
+		if(javaTr.equals(JAVA_PRI_V) || javaTr.equals(JAVA_APP_V)) {
+			jsTr = JS_OBJECT;
+		}
+		
 		if(javaTr.equals(JAVA_PRI_I) || javaTr.equals(JAVA_APP_I) ||
 				javaTr.equals(JAVA_PRI_INTEGER) || javaTr.equals(JAVA_APP_INTEGER) ||
 				javaTr.equals(JAVA_PRI_F) || javaTr.equals(JAVA_APP_F) ||

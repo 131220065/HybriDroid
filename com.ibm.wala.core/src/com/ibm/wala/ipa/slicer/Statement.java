@@ -20,7 +20,7 @@ public abstract class Statement {
     NORMAL, PHI, PI, CATCH, PARAM_CALLER, PARAM_CALLEE, NORMAL_RET_CALLER, NORMAL_RET_CALLEE, EXC_RET_CALLER, EXC_RET_CALLEE, HEAP_PARAM_CALLER, HEAP_PARAM_CALLEE, HEAP_RET_CALLER, HEAP_RET_CALLEE, METHOD_ENTRY, METHOD_EXIT
   }
 
-  private final CGNode node;
+  protected final CGNode node;
 
   public Statement(final CGNode node) {
     super();

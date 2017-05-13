@@ -22,6 +22,8 @@ import com.ibm.wala.types.TypeReference;
 import com.ibm.wala.types.annotations.Annotation;
 import com.ibm.wala.util.strings.Atom;
 
+import nju.hzq.stub.HzqStub;
+
 import java.io.Reader;
 import java.util.Collection;
 import java.util.HashSet;
@@ -52,6 +54,10 @@ public final class MockupClass implements IClass {
 	}
 	
 	private MockupClass(IMethod method){
+		this.method = method;
+	}
+	
+	private MockupClass(IMethod method, int mi){
 		this.method = method;
 	}
 	
@@ -150,7 +156,9 @@ public final class MockupClass implements IClass {
 	@Override
 	public IField getField(Atom name) {
 		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException();
+		HzqStub.stubPrint("return null");
+		return null;
+		//throw new UnsupportedOperationException();
 	}
 
 	@Override

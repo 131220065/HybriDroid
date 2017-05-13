@@ -24,9 +24,13 @@ import com.ibm.wala.ipa.callgraph.AnalysisScope;
 import com.ibm.wala.types.ClassLoaderReference;
 import com.ibm.wala.util.collections.HashSetFactory;
 import com.ibm.wala.util.config.FileOfClasses;
+import com.ibm.wala.util.debug.Assertions;
 import com.ibm.wala.util.strings.Atom;
 import kr.ac.kaist.wala.hybridroid.models.AndroidHybridAppModel;
 import kr.ac.kaist.wala.hybridroid.util.file.FileWriter;
+import nju.hzq.patch.AndroidStringAnalysisPatch;
+import nju.hzq.stub.HzqStub;
+
 import org.apache.commons.lang3.SystemUtils;
 
 import java.io.File;
@@ -35,8 +39,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URL;
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.jar.JarFile;
@@ -108,7 +114,14 @@ public class AndroidHybridAnalysisScope extends AnalysisScope {
 
 		scope.setLoaderImpl(ClassLoaderReference.Application, "com.ibm.wala.dalvik.classLoader.WDexClassLoaderImpl");
 
-		scope.addToScope(ClassLoaderReference.Application, DexFileModule.make(new File(classpath)));
+		//scope.addToScope(ClassLoaderReference.Application, DexFileModule.make(new File(classpath)));
+		
+		List<String> dexFilePaths = AndroidStringAnalysisPatch.unzipDexFiles(new File(classpath).getAbsolutePath(), dir);
+		HzqStub.stubPrint("dexFile num = " + dexFilePaths.size());
+		for(String dexFilePath : dexFilePaths) {
+			scope.addToScope(ClassLoaderReference.Application, DexFileModule.make(new File(dexFilePath)));
+		}
+	
 
 		if(!htmls.isEmpty())
 			scope = setUpJsAnalysisScope(dir, scope, htmls);
@@ -124,6 +137,13 @@ public class AndroidHybridAnalysisScope extends AnalysisScope {
 			throws IllegalArgumentException, IOException {
 
 		JavaScriptLoader.addBootstrapFile(WebUtil.preamble);
+		//hzq: add start
+		//scope.addToScope(scope.getJavaScriptLoader(), new SourceURLModule(AndroidHybridAppModel.class.getClassLoader().getResource("hzqbridge.js")));
+		/*File file = new File(AndroidHybridAppModel.class.getClassLoader().getResource("hzqbridge.js").getFile());
+		java.io.FileWriter fw = new java.io.FileWriter(file);
+		fw.write("jumpToOtherPage();");
+		fw.close();*/
+		//hzq: add end
 		if(SystemUtils.IS_OS_WINDOWS) {
 			scope.addToScope(scope.getJavaScriptLoader(), new SourceURLModule(AndroidHybridAppModel.class.getClassLoader().getResource("prologue.js")) {
 				@Override
@@ -155,14 +175,22 @@ public class AndroidHybridAnalysisScope extends AnalysisScope {
 		}
 		for (URL url : htmls) {
 			try {
-				File f = WebUtil.extractScriptFromHTML(url, DefaultSourceExtractor.factory).snd;
-				scope.addToScope(scope.getJavaScriptLoader(), new SourceURLModule(f.toURI().toURL()));
+				if(url.toString().endsWith(".js")) {//hzq: add
+					scope.addToScope(scope.getJavaScriptLoader(), new SourceURLModule(url));
+					String jspath = url.getFile();
+					HzqStub.stubPrint(jspath);
+					addScopeMap(Atom.findOrCreateAsciiAtom(url.toString()), Atom.findOrCreateAsciiAtom(
+							jspath.substring(jspath.lastIndexOf("/") + 1, jspath.length())));
+				} else {
+					File f = WebUtil.extractScriptFromHTML(url, DefaultSourceExtractor.factory).snd;
+					scope.addToScope(scope.getJavaScriptLoader(), new SourceURLModule(f.toURI().toURL()));
 
-				String jspath = f.getCanonicalPath();
-				addScopeMap(Atom.findOrCreateAsciiAtom(url.toString()), Atom.findOrCreateAsciiAtom(
-						jspath.substring(jspath.lastIndexOf(File.separator) + 1, jspath.length())));
-				if(DEBUG)
-					System.err.println("#Loaded html: " + url.getFile());
+					String jspath = f.getCanonicalPath();
+					addScopeMap(Atom.findOrCreateAsciiAtom(url.toString()), Atom.findOrCreateAsciiAtom(
+							jspath.substring(jspath.lastIndexOf(File.separator) + 1, jspath.length())));
+					if(DEBUG)
+						System.err.println("#Loaded html: " + url.getFile());
+				}
 			} catch (Error | RuntimeException e) {// | UnimplementedError |
 													// Error e) {
 				if(url.toString().startsWith("http")) {
