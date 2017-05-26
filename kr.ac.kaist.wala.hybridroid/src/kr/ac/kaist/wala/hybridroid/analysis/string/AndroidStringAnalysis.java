@@ -34,6 +34,7 @@ import com.ibm.wala.dalvik.classLoader.DexFileModule;
 import com.ibm.wala.dalvik.ipa.callgraph.impl.AndroidEntryPoint;
 import com.ibm.wala.dalvik.util.AndroidEntryPointLocator;
 import com.ibm.wala.dalvik.util.AndroidEntryPointLocator.LocatorFlags;
+import com.ibm.wala.examples.drivers.PDFCallGraph;
 import com.ibm.wala.ipa.callgraph.AnalysisCache;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions;
 import com.ibm.wala.ipa.callgraph.AnalysisOptions.ReflectionOptions;
@@ -247,6 +248,7 @@ public class AndroidStringAnalysis implements StringAnalysis{
 			Pair<CallGraph, PointerAnalysis<InstanceKey>> p = buildCG(cha);
 			cg = p.fst();
 			pa = p.snd();
+			//PDFCallGraph.runGraph(cg);
 		}
 		
 		Set<IBox> boxSet = findHotspots(cg, pa, hotspots);

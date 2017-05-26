@@ -374,6 +374,8 @@ public class AndroidHybridCallGraphBuilder extends JavaJavaScriptHybridCallGraph
 				if (invoke.getNumberOfUses() == 3) {
 					int objUse = invoke.getUse(1);
 					int nameUse = invoke.getUse(2);
+					
+					
 
 					// to find the object creation site. only support intra,
 					// not inter-method.
@@ -1175,7 +1177,6 @@ public class AndroidHybridCallGraphBuilder extends JavaJavaScriptHybridCallGraph
 				if ((method instanceof AstMethod) == false)
 					Assertions.UNREACHABLE("Global read must be invoked in AstMethod: " + method.getClass().getName());
 				String fn = getFileName((AstMethod) method);
-
 				if (fn.endsWith("preamble.js") || fn.endsWith("prologue.js") || fn.endsWith("hzqbridge.js")) {
 					for (InstanceKey globalObj : builder.getGlobalObjects(JavaScriptTypes.jsName)) {
 						if (directGlobalObjectRef(field)) {
@@ -1261,11 +1262,12 @@ public class AndroidHybridCallGraphBuilder extends JavaJavaScriptHybridCallGraph
 
 	private String getFileName(AstMethod m) {
 		String url = m.getSourcePosition().getURL().getFile();
+		HzqStub.stubModified("replace");
 		try {
-			return java.net.URLDecoder.decode(url, "UTF-8");
+			return java.net.URLDecoder.decode(url, "UTF-8").replaceAll(" ", "+");
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
-			return url;
+			return url.replaceAll(" ", "+");
 		}
 	}
 

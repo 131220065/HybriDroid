@@ -72,7 +72,8 @@ Export-Package: .,
  com.ibm.wala.viz,
  com.ibm.wala.viz.viewer,
  nju.hzq.patch,
- nju.hzq.stub
+ nju.hzq.stub,
+ nju.hzq.tool
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Eclipse-BuddyPolicy: registered
 Bundle-ClassPath: .

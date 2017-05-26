@@ -15,6 +15,8 @@ import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import nju.hzq.stub.HzqStub;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
@@ -107,6 +109,7 @@ public class XMLStringResourceReader {
 				// TODO Auto-generated method stub
 				switch(qName){
 				case STRING_TAG:
+					HzqStub.stubModified("return");
 					if(resName == null || resValue == null || resValue.equals(""))
 						throw new InternalError("string resource must have name and value.");
 					//remove white space before real string value

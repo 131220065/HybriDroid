@@ -8,7 +8,6 @@ import java.util.Properties;
 
 import org.omg.CORBA.DynAnyPackage.Invalid;
 
-import com.ibm.wala.examples.drivers.PDFCallGraph;
 import com.ibm.wala.ipa.callgraph.CallGraph;
 import com.ibm.wala.ipa.callgraph.propagation.InstanceKey;
 import com.ibm.wala.ipa.callgraph.propagation.PointerAnalysis;
@@ -17,8 +16,10 @@ import com.ibm.wala.util.WalaException;
 import com.ibm.wala.util.collections.Pair;
 
 import kr.ac.kaist.wala.hybridroid.analysis.HybridCFGAnalysis;
+import kr.ac.kaist.wala.hybridroid.test.ModeledCallGraphForTaint;
+import kr.ac.kaist.wala.hybridroid.test.PrivateLeakageDetector;
+import kr.ac.kaist.wala.hybridroid.test.PrivateLeakageDetector.LeakWarning;
 import kr.ac.kaist.wala.hybridroid.utils.LocalFileReader;
-import nju.hzq.hybridroid.slice.util.SliceTools;
 import nju.hzq.hybridroid.taintanalysis.VariantForwardImpact;
 
 public class HybriDroidMain {
@@ -53,7 +54,7 @@ public class HybriDroidMain {
 		 * Below is the switch case for HybriDroid functions. One function of
 		 * the CommandLineOptionGroup must be one case in below.
 		 */
-		String targetPath = "D:/WALA/HybriDroid/hybridroidTestCases/hybridApp1.apk";
+		String targetPath = "D:/WALA/HybriDroid/hybridroidTestCases/ligamexicana.futbol-18.apk";
 		HybridCFGAnalysis cfgAnalysis = new HybridCFGAnalysis(targetPath, LocalFileReader.androidJar(walaProperties).getPath());
 		Pair<CallGraph, PointerAnalysis<InstanceKey>> p = cfgAnalysis.makeDefaultCallGraph();
 
@@ -63,26 +64,26 @@ public class HybriDroidMain {
 		long endTime = System.currentTimeMillis();
 		System.out.println("#Time: " + (endTime - startTime) / 1000 + "s");
 		
-		PDFCallGraph.runGraph(p.fst);
+		//PDFCallGraph.runGraph(p.fst);
 		//PDFCallGraph.runGraph(CrossLanguageCallGraphTools.prunCallGraphToRelatedJSNodes(p.fst));
 
 		
 		//SliceTools.doSliceFromScan(p.fst, p.snd);
-		new VariantForwardImpact(p.fst, p.snd).mainOnce();
+		//new VariantForwardImpact(p.fst, p.snd).privateDataLeakageDetect();
 		
-//		System.err.println("Graph Modeling for taint...");
-//		ModeledCallGraphForTaint mcg = new ModeledCallGraphForTaint(p.fst);
-//		
-//		PrivateLeakageDetector pld = new PrivateLeakageDetector(mcg, p.snd);
-//		pld.analyze();
-//		
-//		System.out.println("#AllTime: " + (System.currentTimeMillis() - startTime) / 1000 + "s");
-//		
-//		for(LeakWarning w : pld.getWarnings()){
-//			System.out.println("=========");
-//			System.out.println(w);
-//			System.out.println("=========");
-//			w.printPathFlow("leak.dot");
-//		}
+		System.err.println("Graph Modeling for taint...");
+		ModeledCallGraphForTaint mcg = new ModeledCallGraphForTaint(p.fst);
+		
+		PrivateLeakageDetector pld = new PrivateLeakageDetector(mcg, p.snd);
+		pld.analyze();
+		
+		System.out.println("#taint anlysis time: " + (System.currentTimeMillis() - endTime) / 1000 + "s");
+		
+		for(LeakWarning w : pld.getWarnings()){
+			System.out.println("=========");
+			System.out.println(w);
+			System.out.println("=========");
+			w.printPathFlow("leak.dot");
+		}
 	}
 }

@@ -71,6 +71,11 @@ import com.ibm.wala.types.ClassLoaderReference;
 import com.ibm.wala.types.TypeReference;
 import com.ibm.wala.util.MonitorUtil.IProgressMonitor;
 import com.ibm.wala.util.config.SetOfClasses;
+import com.ibm.wala.util.debug.Assertions;
+
+import nju.hzq.patch.HybridCallBackResult;
+import nju.hzq.stub.HzqStub;
+import nju.hzq.tool.HybridCallGraphTool;
 
 /**
  *  Searches an Android application for its EntryPoints.
@@ -163,6 +168,13 @@ public final class AndroidEntryPointLocator {
             	 )) {
 nextMethod:
                 for (final IMethod m : cls.getDeclaredMethods()) {
+                	HzqStub.stubModified("add entrypoint bridge method");
+                	if(HybridCallGraphTool.isBridgeMethod(m)) {
+                    	entryPoints.add(new AndroidEntryPoint(
+                    			new AndroidPossibleEntryPoint(AndroidComponent.APPLICATION, "Bridge Method", ApplicationEP.onCreate),
+                    			m, cha));
+                    	//Assertions.UNREACHABLE();
+                    }
 //                    if (cls.getName().toString().contains("MainActivity")) {
 //                    	System.err.println("got here: " + m);
 //                    }
@@ -174,6 +186,7 @@ nextMethod:
                             } else if (! isAPIComponent(m)) {
                                 entryPoints.add(new AndroidEntryPoint(e, m, cha));
                             }
+                            
                             continue nextMethod;
                         }
                     }

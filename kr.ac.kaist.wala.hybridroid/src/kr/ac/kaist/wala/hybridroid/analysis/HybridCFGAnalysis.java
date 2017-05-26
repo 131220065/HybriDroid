@@ -144,6 +144,8 @@ public class HybridCFGAnalysis {
 		// "android/webkit/WebView",
 		// "loadDataWithBaseURL(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V",
 		// 3));
+		
+		HzqStub.stubModified("not do string analysis");
 		asa.analyze(hotspots);
 
 		return asa;
@@ -230,12 +232,13 @@ public class HybridCFGAnalysis {
 			}
 		}
 
-		if (jsFiles.isEmpty()) {
+		HzqStub.stubModified("即使没有js文件，也进行分析");
+		/*if (jsFiles.isEmpty()) {
 			System.out.println("It does not have local html files or js codes");
 			Shell.END = System.currentTimeMillis();
 			System.out.println("#Time: " + (Shell.END - Shell.START));
 			System.exit(-1);
-		}
+		}*/
 
 		AnalysisScopeBuilder scopeBuilder = AnalysisScopeBuilder.build(dirPath, new File(targetPath), false, jsFiles);
 

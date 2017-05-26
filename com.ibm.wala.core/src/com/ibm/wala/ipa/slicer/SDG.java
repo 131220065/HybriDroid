@@ -389,8 +389,10 @@ public class SDG<T extends InstanceKey> extends AbstractNumberedGraph<Statement>
                   if(HybridCallBackResult.callbackResult != null && 
                       N.getNode().getClassHierarchy().isSubclassOf(N.getNode().getMethod().getDeclaringClass()
                           , HybridCallBackResult.callbackResult.webChromeClient)) {
-                    if(parameterIndex != 2) {
+                    if(parameterIndex != 3) {
                       continue;
+                    } else {
+                      parameterIndex = 2;
                     }
                   } else {
                     //bridge
@@ -584,7 +586,7 @@ public class SDG<T extends InstanceKey> extends AbstractNumberedGraph<Statement>
                 t.getClassHierarchy().isSubclassOf(t.getMethod().getDeclaringClass()
                     , HybridCallBackResult.callbackResult.webChromeClient)) {
               if(call.getUse(2) == pac.getValueNumber()) {
-                Statement s = new ParamCallee(t, 2 + 1);
+                Statement s = new ParamCallee(t, t.getIR().getParameter(3));
                 addNode(s);
                 result.add(s);
               }

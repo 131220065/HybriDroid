@@ -37,6 +37,7 @@ import com.ibm.wala.util.intset.SparseIntSet;
 import kr.ac.kaist.wala.hybridroid.models.AndroidHybridAppModel;
 import kr.ac.kaist.wala.hybridroid.util.graph.visualize.Visualizer;
 import kr.ac.kaist.wala.hybridroid.util.graph.visualize.Visualizer.GraphType;
+import nju.hzq.stub.HzqStub;
 
 import java.io.IOException;
 import java.util.*;
@@ -110,7 +111,7 @@ public class PrivateLeakageDetector {
 	
 	private static MethodReference[] mSourceRefs = {
 			//for wifi information
-			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Application, "Landroid/telephony/TelephonyManager"), Selector.make("getLine1Number()Ljava/lang/String;")),
+			MethodReference.findOrCreate(TypeReference.findOrCreate(ClassLoaderReference.Application, "Landroid/telephony/TelephonyManager"), Selector.make("getLine1Number()Ljava/lang/String;")),
 //			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/net/wifi/WifiManager"), Selector.make("getWifiApState()I")),
 //			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/net/wifi/WifiManager"), Selector.make("getConnectionInfo()Landroid/net/wifi/WifiInfo;")),
 	};
@@ -1421,7 +1422,12 @@ public class PrivateLeakageDetector {
 							PointerKey pk = domain.getMappedObject(d1);
 							
 							if(pkSet.contains(pk)){
+								if(call.getLastInstruction().getDef() <= 0) {
+									return null;
+								}
+								
 								fromTo(pk, pa.getHeapModel().getPointerKeyForLocal(call.getNode(), call.getLastInstruction().getDef()));
+								
 								int d = domain.add(pa.getHeapModel().getPointerKeyForLocal(call.getNode(), call.getLastInstruction().getDef()));
 								if(pk instanceof LocalPointerKey){
 									return SparseIntSet.singleton(d);

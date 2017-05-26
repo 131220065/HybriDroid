@@ -13,11 +13,13 @@ import nju.hzq.stub.HzqStub;
 
 public class HzqHybridTools {
 	private static TypeReference jsinterAnnTR = null;
-	
+
 	public static boolean isBridgeMethod(IMethod m) {
-		if(jsinterAnnTR == null) {
-			jsinterAnnTR = TypeReference.find(ClassLoaderReference.Primordial,
-					"Landroid/webkit/JavascriptInterface"); 
+		if (jsinterAnnTR == null) {
+			jsinterAnnTR = TypeReference.find(ClassLoaderReference.Primordial, "Landroid/webkit/JavascriptInterface");
+		}
+		if (m.getAnnotations() == null) {
+			return false;
 		}
 		for (Annotation ann : m.getAnnotations()) {
 			TypeReference annTr = ann.getType();
@@ -26,11 +28,11 @@ public class HzqHybridTools {
 		}
 		return false;
 	}
-	
+
 	public static Atom getLanguage(CGNode node) {
-	    return node.getMethod().getReference().getDeclaringClass().getClassLoader().getLanguage();
+		return node.getMethod().getReference().getDeclaringClass().getClassLoader().getLanguage();
 	}
-	
+
 	public static boolean isJSNode(CGNode node) {
 		return JavaScriptTypes.jsName.equals(getLanguage(node));
 	}

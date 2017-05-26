@@ -18,6 +18,7 @@ import com.ibm.wala.ipa.callgraph.pruned.PrunedCallGraph;
 import com.ibm.wala.ipa.slicer.Statement;
 import com.ibm.wala.ssa.SSAInstruction;
 import com.ibm.wala.ssa.SymbolTable;
+import com.ibm.wala.types.TypeName;
 import com.ibm.wala.util.debug.Assertions;
 import com.ibm.wala.util.strings.Atom;
 
@@ -31,6 +32,15 @@ public class CrossLanguageCallGraphTools {
 	
 	public static boolean isJSNode(CGNode node) {
 		return JavaScriptTypes.jsName.equals(getLanguage(node));
+	}
+	
+	public static boolean isFakeRootNode(CGNode node) {
+		TypeName className = node.getMethod().getDeclaringClass().getName();
+		if(className.equals(TypeName.findOrCreate("Lcom/ibm/wala/FakeRootClass"))
+				|| className.equals(TypeName.findOrCreate("LFakeRoot"))) {
+			return true;
+		}
+		return false;
 	}
 	
 	//根据方法名找节点
