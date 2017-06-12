@@ -118,29 +118,29 @@ public class AndroidResourceAnalysis {
 		}
 		
 		HzqStub.stubModified("deleted below");
-//		XMLStringResourceReader xsrr = new XMLStringResourceReader();
-//		
-//		for(File f : valueDirs){
-//			Set<File> stringXmlFiles = new HashSet<File>();
-//			String region;
-//			
-//			switch(f.getName()){
-//			case "values":
-//				region = "common";
-//				break;
-//			default:
-//				String fname = f.getName();
-//				region = fname.substring(fname.indexOf("-") + 1, fname.length());
-//				break;
-//			}
-//			stringXmlFiles.addAll(getFiles(f, "strings.xml", null));
-//			Map<String, String> xmlRes = new HashMap<String, String>();
-//			for(File stringXml : stringXmlFiles){
-//				xmlRes.putAll(xsrr.parseResource(stringXml));
-//			}
-//			if(!xmlRes.isEmpty())
-//				strRes.put(region, matchResource(rRes, xmlRes));
-//		}
+		XMLStringResourceReader xsrr = new XMLStringResourceReader();
+		
+		for(File f : valueDirs){
+			Set<File> stringXmlFiles = new HashSet<File>();
+			String region;
+			
+			switch(f.getName()){
+			case "values":
+				region = "common";
+				break;
+			default:
+				String fname = f.getName();
+				region = fname.substring(fname.indexOf("-") + 1, fname.length());
+				break;
+			}
+			stringXmlFiles.addAll(getFiles(f, "strings.xml", null));
+			Map<String, String> xmlRes = new HashMap<String, String>();
+			for(File stringXml : stringXmlFiles){
+				xmlRes.putAll(xsrr.parseResource(stringXml));
+			}
+			if(!xmlRes.isEmpty())
+				strRes.put(region, matchResource(rRes, xmlRes));
+		}
 	}
 	
 	public boolean isResourceClass(String path){

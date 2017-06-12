@@ -109,9 +109,12 @@ public class XMLStringResourceReader {
 				// TODO Auto-generated method stub
 				switch(qName){
 				case STRING_TAG:
-					HzqStub.stubModified("return");
-					if(resName == null || resValue == null || resValue.equals(""))
-						throw new InternalError("string resource must have name and value.");
+					HzqStub.stubModified("hzq");
+					if(resName == null || resValue == null || resValue.equals("")) {
+						resName = "hzq";
+						resValue = "hzq";
+					}
+						//throw new InternalError("string resource must have name and value.");
 					//remove white space before real string value
 					
 					//resValue = resValue.replace("\n", "");\

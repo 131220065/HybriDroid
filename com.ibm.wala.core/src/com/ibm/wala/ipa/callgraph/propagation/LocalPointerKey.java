@@ -11,6 +11,7 @@
 package com.ibm.wala.ipa.callgraph.propagation;
 
 import com.ibm.wala.ipa.callgraph.CGNode;
+import com.ibm.wala.util.debug.Assertions;
 
 /**
  * A pointer key which provides a unique set for each local in each call graph node.
@@ -33,7 +34,7 @@ public class LocalPointerKey extends AbstractLocalPointerKey {
   }
 
   @Override
-  public final boolean equals(Object obj) {
+  public boolean equals(Object obj) {
     if (obj instanceof LocalPointerKey) {
       LocalPointerKey other = (LocalPointerKey) obj;
       return node.equals(other.node) && valueNumber == other.valueNumber;
@@ -43,7 +44,7 @@ public class LocalPointerKey extends AbstractLocalPointerKey {
   }
 
   @Override
-  public final int hashCode() {
+  public int hashCode() {
     return node.hashCode() * 23 + valueNumber;
   }
 

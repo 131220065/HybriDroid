@@ -80,6 +80,14 @@ public class PrivateLeakageDetector {
 	private final Map<PointerKey, Set<PointerKey>> toFromMap = new HashMap<PointerKey, Set<PointerKey>>();
 	
 	private final Set<LeakWarning> warn = new HashSet<LeakWarning>();
+	private IClass LOG;
+	private IClass ISharedPreferences;
+	private IClass OutPutStream;
+	private IClass IDataOutput;
+	private IClass URL;
+	private IClass IHttpClient;
+	private IClass WebView;
+	private IClass Writer;
 	
 	private void fromTo(PointerKey from, PointerKey to){
 		if(!toFromMap.containsKey(to)){
@@ -100,7 +108,11 @@ public class PrivateLeakageDetector {
 		
 		Set<List<PointerKey>> sl = new HashSet<List<PointerKey>>();
 		List<PointerKey> l = new ArrayList<PointerKey>();
-		for(PointerKey pred : toFromMap.get(pk)){
+		HzqStub.stubModified("null detect");
+		Set<PointerKey> set = toFromMap.get(pk);
+//		if(set == null)
+//			return sl;
+		for(PointerKey pred : set){
 			sl.addAll(calcPath(pred));
 		}
 		for(List<PointerKey> lpk : sl){
@@ -111,9 +123,11 @@ public class PrivateLeakageDetector {
 	
 	private static MethodReference[] mSourceRefs = {
 			//for wifi information
-			MethodReference.findOrCreate(TypeReference.findOrCreate(ClassLoaderReference.Application, "Landroid/telephony/TelephonyManager"), Selector.make("getLine1Number()Ljava/lang/String;")),
-//			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/net/wifi/WifiManager"), Selector.make("getWifiApState()I")),
-//			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/net/wifi/WifiManager"), Selector.make("getConnectionInfo()Landroid/net/wifi/WifiInfo;")),
+			MethodReference.findOrCreate(TypeReference.findOrCreate(ClassLoaderReference.Primordial, "Landroid/telephony/TelephonyManager"), Selector.make("getLine1Number()Ljava/lang/String;")),
+			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/net/wifi/WifiManager"), Selector.make("getWifiApState()I")),
+			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/net/wifi/WifiManager"), Selector.make("getConnectionInfo()Landroid/net/wifi/WifiInfo;")),
+			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/location/LocationManager"), Selector.make("getLastKnownLocation(Ljava/lang/String;)Landroid/location/Location;")),
+			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/content/ContentResolver"), Selector.make("query(Landroid/net/Uri;[Ljava/lang/String;Ljava/lang/String;[Ljava/lang/String;Ljava/lang/String;)Landroid/database/Cursor;")),
 	};
 	/*
 < Primordial, Ljava/net/URLConnection, setRequestProperty(Ljava/lang/String;Ljava/lang/String;)V
@@ -122,19 +136,19 @@ public class PrivateLeakageDetector {
 	private static MethodReference[] mSinkRefs = {
 			MethodReference.findOrCreate(TypeReference.find(JavaScriptTypes.jsLoader, "Lpreamble.js/XMLHttpRequest/xhr_send"), Selector.make("do()LRoot")),
 			//for http connetion
-//			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Ljava/net/URLConnection"), Selector.make("setRequestProperty(Ljava/lang/String;Ljava/lang/String;)V")),
-//			//for write something 
-//			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Ljava/io/Writer"), Selector.make("write(Ljava/lang/String;)V")),
-//			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Ljava/io/Writer"), Selector.make("write(Ljava/lang/String;II)V")),
-//			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Ljava/io/Writer"), Selector.make("write([C)V")),
-//			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Ljava/io/Writer"), Selector.make("write([CII)V")),
-//			//for Log
-//			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/util/Log"), Selector.make("d(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I")),
-//			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/util/Log"), Selector.make("d(Ljava/lang/String;Ljava/lang/String;)I")),
-//			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/util/Log"), Selector.make("e(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I")),
-//			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/util/Log"), Selector.make("e(Ljava/lang/String;Ljava/lang/String;)I")),
-//			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/util/Log"), Selector.make("i(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I")),
-//			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/util/Log"), Selector.make("i(Ljava/lang/String;Ljava/lang/String;)I")),
+			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Ljava/net/URL"), Selector.make("openConnection()Ljava/net/URLConnection")),
+			//for write something 
+			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Ljava/io/Writer"), Selector.make("write(Ljava/lang/String;)V")),
+			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Ljava/io/Writer"), Selector.make("write(Ljava/lang/String;II)V")),
+			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Ljava/io/Writer"), Selector.make("write([C)V")),
+			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Ljava/io/Writer"), Selector.make("write([CII)V")),
+			//for Log
+			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/util/Log"), Selector.make("d(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I")),
+			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/util/Log"), Selector.make("d(Ljava/lang/String;Ljava/lang/String;)I")),
+			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/util/Log"), Selector.make("e(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I")),
+			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/util/Log"), Selector.make("e(Ljava/lang/String;Ljava/lang/String;)I")),
+			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/util/Log"), Selector.make("i(Ljava/lang/String;Ljava/lang/String;Ljava/lang/Throwable;)I")),
+			MethodReference.findOrCreate(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/util/Log"), Selector.make("i(Ljava/lang/String;Ljava/lang/String;)I")),
 	};
 	
 	private static FieldReference[] fSourceRefs = {
@@ -155,11 +169,37 @@ public class PrivateLeakageDetector {
 	}
 	
 	public boolean isSinkMethod(MethodReference mr){
-		for(MethodReference sr : mSinkRefs){
-			if(sr.equals(mr)){
+		TypeReference classRef = mr.getDeclaringClass();
+		String methodName = mr.getName().toString();
+		IClass declaredClass = cha.lookupClass(classRef);
+		if (declaredClass != null) {
+			if (declaredClass.equals(LOG)) {
+				return true;
+			} else if (methodName.startsWith("put") && cha.implementsInterface(declaredClass, ISharedPreferences)) {
+				return true;
+			} else if (methodName.startsWith("write")) {
+				if (cha.isSubclassOf(declaredClass, OutPutStream)) {
+					return true;
+				} else if (cha.isSubclassOf(declaredClass, Writer)) {
+					return true;
+				} else if (cha.implementsInterface(declaredClass, IDataOutput)) {
+					return true;
+				}
+			} else if (methodName.equals("append") && cha.isSubclassOf(declaredClass, Writer)) {
+				return true;
+			} else if (methodName.equals("openConnection") && cha.isSubclassOf(declaredClass, URL)) {
+				return true;
+			} else if (methodName.equals("excute") && cha.implementsInterface(declaredClass, IHttpClient)) {
+				return true;
+			} else if (methodName.equals("loadUrl") && cha.isSubclassOf(declaredClass, WebView)) {
 				return true;
 			}
 		}
+//		for(MethodReference sr : mSinkRefs){
+//			if(sr.equals(mr)){
+//				return true;
+//			}
+//		}
 		return false;
 	}
 	
@@ -208,6 +248,21 @@ public class PrivateLeakageDetector {
 		contextClass = cha.lookupClass(contextTR);
 		mapClass = cha.lookupClass(mapTR);
 		bitmapClass = cha.lookupClass(bitmapTR);
+		
+		
+		LOG = cha.lookupClass(TypeReference.findOrCreate(ClassLoaderReference.Primordial, "Landroid/util/Log"));
+		ISharedPreferences = cha.lookupClass(
+				TypeReference.findOrCreate(ClassLoaderReference.Primordial, "Landroid/content/SharedPreferences"));
+		OutPutStream = cha
+				.lookupClass(TypeReference.findOrCreate(ClassLoaderReference.Primordial, "Ljava/io/OutputStream"));
+		IDataOutput = cha
+				.lookupClass(TypeReference.findOrCreate(ClassLoaderReference.Primordial, "Ljava/io/DataOutput"));
+		URL = cha.lookupClass(TypeReference.findOrCreate(ClassLoaderReference.Primordial, "Ljava/net/URL"));
+		IHttpClient = cha.lookupClass(
+				TypeReference.findOrCreate(ClassLoaderReference.Primordial, "Lorg/apache/http/client/HttpClient"));
+		WebView = cha
+				.lookupClass(TypeReference.findOrCreate(ClassLoaderReference.Primordial, "Landroid/webkit/WebView"));
+		Writer = cha.lookupClass(TypeReference.findOrCreate(ClassLoaderReference.Primordial, "Ljava/io/Writer"));
 	}
 	
 	private class TaintDomain implements TabulationDomain<PointerKey, BasicBlockInContext<IExplodedBasicBlock>>{
@@ -473,6 +528,7 @@ public class PrivateLeakageDetector {
 			}else
 			for(MethodReference mr : mSourceRefs){
 				if(cg.getNodes(mr).isEmpty()){
+					HzqStub.stubPrint("empty: " + mr.toString());
 					for(CGNode n : cg){
 						IR ir = n.getIR();
 						if(ir != null){
@@ -481,7 +537,9 @@ public class PrivateLeakageDetector {
 								CallSiteReference csr = icsr.next();
 								if(cg.getPossibleTargets(n, csr).isEmpty()){
 									for(SSAAbstractInvokeInstruction callInst : ir.getCalls(csr)){
-										if(mr.equals(callInst.getDeclaredTarget())){
+										if(mr.getDeclaringClass().getName().equals(callInst.getDeclaredTarget().getDeclaringClass().getName())
+												&& mr.getName().equals(callInst.getDeclaredTarget().getName())){
+											HzqStub.stubPrint("success: " + mr);
 											BasicBlockInContext<IExplodedBasicBlock> callBlock = getBlockForCall(n, callInst);
 											int defVar = callInst.getDef();
 											fromTo(new SeedKey(), pa.getHeapModel().getPointerKeyForLocal(n, defVar));
@@ -502,6 +560,7 @@ public class PrivateLeakageDetector {
 				}
 				else
 					for(CGNode n : cg.getNodes(mr)){
+						HzqStub.stubPrint("not empty: " + mr.toString());
 						BasicBlockInContext<IExplodedBasicBlock>[] entries = supergraph.getEntriesForProcedure(n);
 						for(BasicBlockInContext<IExplodedBasicBlock> entry : entries){
 							for(Iterator<BasicBlockInContext<IExplodedBasicBlock>> iCall = supergraph.getPredNodes(entry); iCall.hasNext();){

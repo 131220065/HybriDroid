@@ -1,12 +1,9 @@
 package nju.hzq.hybridroid.taintanalysis;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Scanner;
 import java.util.Set;
 
 import com.ibm.wala.cast.ir.ssa.AbstractReflectivePut;
@@ -15,8 +12,6 @@ import com.ibm.wala.cast.ir.ssa.AstEchoInstruction;
 import com.ibm.wala.cast.ir.ssa.AstGlobalRead;
 import com.ibm.wala.cast.ir.ssa.AstGlobalWrite;
 import com.ibm.wala.cast.ir.ssa.AstIsDefinedInstruction;
-import com.ibm.wala.cast.ir.ssa.AstLexicalAccess;
-import com.ibm.wala.cast.ir.ssa.AstLexicalAccess.Access;
 import com.ibm.wala.cast.ir.ssa.AstLexicalRead;
 import com.ibm.wala.cast.ir.ssa.AstLexicalWrite;
 import com.ibm.wala.cast.ir.ssa.CAstBinaryOp;
@@ -35,7 +30,7 @@ import com.ibm.wala.cast.js.ssa.SetPrototype;
 import com.ibm.wala.classLoader.CallSiteReference;
 import com.ibm.wala.classLoader.IClass;
 import com.ibm.wala.classLoader.IField;
-import com.ibm.wala.examples.drivers.PDFCallGraph;
+import com.ibm.wala.classLoader.NewSiteReference;
 import com.ibm.wala.ipa.callgraph.CGNode;
 import com.ibm.wala.ipa.callgraph.CallGraph;
 import com.ibm.wala.ipa.callgraph.propagation.InstanceKey;
@@ -89,23 +84,14 @@ import nju.hzq.patch.HybridCallBackResult;
 import nju.hzq.stub.HzqStub;
 import nju.hzq.tool.HybridCallGraphTool;
 
-public class VariantForwardImpact {
+public class Not_Use_VariantForwardImpact {
 	private final String intent = "INTENT";
 	private final String bundle = "BUNDLE";
-
-	private ArrayList<LocalPointerKey> rootTaintLpkArray = new ArrayList<>();
-	private ArrayList<LocalPointerKey> warnLpkArray = new ArrayList<>();
 
 	private CallGraph cg = null;
 	private PointerAnalysis<InstanceKey> pa = null;
 	private IClassHierarchy cha = null;
-	// private LinkedHashMap<LocalPointerKey, HashSet<LocalPointerKey>>
-	// impactMap = null;
-
-	private HashMap<LocalPointerKey, Integer> impactIndexMap = null;
-	private ArrayList<LocalPointerKey> impactLpkWithInsts = null;
-	private HashMap<Integer, HashSet<Integer>> impactMap = null;
-
+	private LinkedHashMap<LocalPointerKey, HashSet<LocalPointerKey>> impactMap = null;
 	private HashSet<PointerKey> usedFieldKeys = null;
 	private HashMap<PointerKey, HashSet<LocalPointerKey>> fieldMap = null;
 
@@ -198,18 +184,18 @@ public class VariantForwardImpact {
 
 	}
 
-	private class VariantImpactGraph implements Graph<LocalPointerKey> {
+	private Graph<LocalPointerKey> g = new Graph<LocalPointerKey>() {
 
 		@Override
 		public Iterator<LocalPointerKey> iterator() {
 			// TODO Auto-generated method stub
-			return impactLpkWithInsts.iterator();
+			return impactMap.keySet().iterator();
 		}
 
 		@Override
 		public int getNumberOfNodes() {
 			// TODO Auto-generated method stub
-			return impactLpkWithInsts.size();
+			return impactMap.keySet().size();
 		}
 
 		@Override
@@ -224,7 +210,7 @@ public class VariantForwardImpact {
 
 		@Override
 		public boolean containsNode(LocalPointerKey n) {
-			return impactIndexMap.containsKey(n);
+			return impactMap.containsKey(n);
 		}
 
 		@Override
@@ -241,19 +227,13 @@ public class VariantForwardImpact {
 
 		@Override
 		public Iterator<LocalPointerKey> getSuccNodes(LocalPointerKey n) {
-			ArrayList<LocalPointerKey> al = new ArrayList<>();
-			int nIndex = findOrCreateIndexOf(n);
-			for (int index : impactMap.get(nIndex)) {
-				al.add(impactLpkWithInsts.get(index));
-			}
-			return al.iterator();
+			return impactMap.get(n).iterator();
 		}
 
 		@Override
 		public int getSuccNodeCount(LocalPointerKey N) {
 			// TODO Auto-generated method stub
-			int NIndex = findOrCreateIndexOf(N);
-			return impactMap.get(NIndex).size();
+			return impactMap.get(N).size();
 		}
 
 		@Override
@@ -293,13 +273,11 @@ public class VariantForwardImpact {
 		}
 	};
 
-	public VariantForwardImpact(CallGraph cg, PointerAnalysis<InstanceKey> pa) {
+	public Not_Use_VariantForwardImpact(CallGraph cg, PointerAnalysis<InstanceKey> pa) {
 		this.cg = cg;
 		this.pa = pa;
 		cha = cg.getClassHierarchy();
-		impactMap = new HashMap<>();
-		impactLpkWithInsts = new ArrayList<>();
-		impactIndexMap = new HashMap<>();
+		impactMap = new LinkedHashMap<>();
 		fieldMap = new HashMap<>();
 		usedFieldKeys = new HashSet<>();
 		globalMap = new HashMap<>();
@@ -324,148 +302,21 @@ public class VariantForwardImpact {
 		System.out.println("\n");
 		System.out.println("leakage warnings:");
 		System.out.println();
-		int index = 0;
 		for (String key : warnings.keySet()) {
 			HashSet<LocalPointerKey> lpks = warnings.get(key);
 			System.out.println(key + "; num = " + lpks.size() + " : ");
 			for (LocalPointerKey lpk : lpks) {
-				warnLpkArray.add(lpk);
-				System.out.println("序号 = " + index + " : " + lpk);
-				index++;
+				System.out.println(lpk);
 			}
 			System.out.println();
 		}
 		System.out.println("\n\n");
-		scanIndexAndPrunGraph();
-	}
-
-	private void scanIndexAndPrunGraph() {
-		Scanner scan = new Scanner(System.in);
-		System.out.println("请输入source Index 和 sink Index");
-		short sourceIndex = 0;
-		sourceIndex = scan.nextShort();
-		if (sourceIndex < 0 || sourceIndex >= rootTaintLpkArray.size()) {
-			System.out.println("source Index超出范围");
-			return;
-		}
-		int sinkIndex = 0;
-		sinkIndex = scan.nextInt();
-		if (sinkIndex < 0 || sinkIndex >= warnLpkArray.size()) {
-			System.out.println("sink Index超出范围");
-			return;
-		}
-		LocalPointerKey sourceLpk = rootTaintLpkArray.get(sourceIndex);
-		LocalPointerKey sinkLpk = warnLpkArray.get(sinkIndex);
-		LinkedHashSet<LocalPointerKey> impactedIndexSet = new LinkedHashSet<>();
-
-		System.out.println("SOURCE = " + sourceLpk);
-		System.out.println("SINK = " + sinkLpk);
-		sinkIndex = findOrCreateIndexOf(sinkLpk);
-		HashSet<LocalPointerKey> hs = new HashSet<>();
-		hs.add(sourceLpk);
-		impactedIndexSet.add(sinkLpk);
-		hs = findSourceToSink(sourceLpk, sinkLpk, sinkIndex, hs, impactedIndexSet);
-		impactedIndexSet.add(sourceLpk);
-	
-		
-		if (hs == null) {
-			System.out.println("不存在从此source到此sink的路径");
-			return;
-		}
-		
-		System.out.println("\n\n\nLEAKAGE PATH : ");
-		
-		Object[] arr = impactedIndexSet.toArray();
-		for(int i = arr.length - 1; i >= 0; i--) {
-			System.out.println(arr[i] + "===>");
-		}
-		
-		for (int i : impactMap.get(sinkIndex)) {
-			impactedIndexSet.add(impactLpkWithInsts.get(i));
-		}
-		
-		System.out.println("start pdfGraph, graphSize = " + impactedIndexSet.size());
-
-		VariantImpactGraph vig = new VariantImpactGraph() {
-			@Override
-			public Iterator<LocalPointerKey> iterator() {
-				// TODO Auto-generated method stub
-				return impactedIndexSet.iterator();
-			}
-
-			@Override
-			public int getNumberOfNodes() {
-				// TODO Auto-generated method stub
-				return impactedIndexSet.size();
-			}
-
-			@Override
-			public boolean containsNode(LocalPointerKey n) {
-				return impactedIndexSet.contains(n);
-			}
-
-			@Override
-			public Iterator<LocalPointerKey> getSuccNodes(LocalPointerKey n) {
-				ArrayList<LocalPointerKey> al = new ArrayList<>();
-				int nIndex = findOrCreateIndexOf(n);
-				for (int index : impactMap.get(nIndex)) {
-					LocalPointerKey lpk = impactLpkWithInsts.get(index);
-					if (impactedIndexSet.contains(lpk)) {
-						al.add(lpk);
-					}
-				}
-				return al.iterator();
-			}
-
-			@Override
-			public int getSuccNodeCount(LocalPointerKey N) {
-				// TODO Auto-generated method stub
-				ArrayList<LocalPointerKey> al = new ArrayList<>();
-				int nIndex = findOrCreateIndexOf(N);
-				for (int index : impactMap.get(nIndex)) {
-					LocalPointerKey lpk = impactLpkWithInsts.get(index);
-					if (impactedIndexSet.contains(lpk)) {
-						al.add(lpk);
-					}
-				}
-				return al.size();
-			}
-		};
-		PDFCallGraph.runGraph(vig);
-	}
-
-	private HashSet<LocalPointerKey> findSourceToSink(LocalPointerKey sourceLpk, LocalPointerKey sinkLpk, int sinkIndex,
-			HashSet<LocalPointerKey> impactedIndexSet, HashSet<LocalPointerKey> impactedPath) {
-		// 深度优先回溯搜索一条source到sink的边
-		int sourceIndex = findOrCreateIndexOf(sourceLpk);
-		HashSet<Integer> hs = impactMap.get(sourceIndex);
-		if (hs == null) {
-			//impactedIndexSet.remove(sourceLpk);
-			return null;
-		}
-		if (hs.contains(sinkIndex)) {
-			// 找到了，返回
-			impactedIndexSet.add(sinkLpk);
-			return impactedIndexSet;
-		}
-		for (int index : hs) {
-			LocalPointerKey lpk = impactLpkWithInsts.get(index);
-			if (!impactedIndexSet.contains(lpk)) {
-				impactedIndexSet.add(lpk);
-				HashSet<LocalPointerKey> hs2 = findSourceToSink(lpk, sinkLpk, sinkIndex, impactedIndexSet, impactedPath);
-				if (hs2 != null) {
-					impactedPath.add(lpk);
-					return hs2;
-				}
-			}
-		}
-		//impactedIndexSet.remove(sourceLpk);
-		return null;
+		//PDFCallGraph.runGraph(g);
 	}
 
 	private Set<CGNode> getKeepNodes() {
 		Set<CGNode> keepNodes = new HashSet<>();
-		for (LocalPointerKey lpk : impactLpkWithInsts) {
+		for (LocalPointerKey lpk : impactMap.keySet()) {
 			keepNodes.add(lpk.getNode());
 		}
 		return keepNodes;
@@ -497,11 +348,11 @@ public class VariantForwardImpact {
 				HashSet<LocalPointerKey> lpks = rootTaint.get(key);
 				System.out.println("type = " + key + "; num = " + lpks.size() + " : ");
 				for (LocalPointerKey taintLpk : lpks) {
-					rootTaintLpkArray.add(taintLpk);
 					((LocalPointerKeyWithInstruction) taintLpk).setIndex(index);
-					System.out.println("序号 = " + index + " : " + taintLpk);
+					System.out.println(taintLpk);
 					index++;
 				}
+				System.out.println();
 			}
 			Set<LocalPointerKey> workSet = new HashSet<>();
 			for (HashSet<LocalPointerKey> lpkSet : rootTaint.values()) {
@@ -514,55 +365,39 @@ public class VariantForwardImpact {
 			while (!workSet.isEmpty()) {
 				workSet = getOneForwardImpacts(workSet);
 			}
-			computeIndexs();
+			//computeIndexs();
 			outImpact();
 		}
 
 	}
 
 	private void computeIndexs() {
-		// HzqStub.stubPrint("start compute indexs");
+		Set<LocalPointerKey> keySet = impactMap.keySet();
+		HzqStub.stubPrint("deal with lpkWithInst + size = " + keySet.size());
+		for(HashSet<LocalPointerKey> valueLpks : impactMap.values()) {
+			for(LocalPointerKey kLpk : keySet) {
+				if(valueLpks.contains(kLpk)) {
+					valueLpks.remove(kLpk);
+					valueLpks.add(kLpk);
+				}
+			}
+		}
+		HzqStub.stubPrint("start compute indexs");
 		boolean isChanged = true;
 		while (isChanged) {
 			isChanged = false;
-			for (int i = 0; i < impactLpkWithInsts.size(); i++) {
-				HashSet<Short> sourceIndexs = ((LocalPointerKeyWithInstruction) impactLpkWithInsts.get(i))
-						.getSourceIndexs();
-				if (sourceIndexs.size() == 0) {
-					continue;
-				}
-				HashSet<Integer> values = impactMap.get(i);
-				for (int vIndex : values) {
-					if (((LocalPointerKeyWithInstruction) impactLpkWithInsts.get(vIndex)).addIndexs(sourceIndexs)) {
+			for (LocalPointerKey keyLpk : keySet) {
+				HashSet<Short> sourceIndexs = ((LocalPointerKeyWithInstruction) keyLpk).getSourceIndexs();
+				HashSet<LocalPointerKey> valueLpks = impactMap.get(keyLpk);
+				for (LocalPointerKey vLpk : valueLpks) {
+					if (((LocalPointerKeyWithInstruction) vLpk).addIndexs(sourceIndexs)) {
 						isChanged = true;
 					}
 				}
 			}
 		}
-		// HzqStub.stubPrint("end compute indexs");
-		// System.out.println("\n\n\n");
-		// for(LocalPointerKey lpk : impactLpkWithInsts) {
-		// HashSet<Short> sourceIndexs = ((LocalPointerKeyWithInstruction)
-		// lpk).getSourceIndexs();
-		// if(sourceIndexs.size() == 0) {
-		// System.out.println(lpk + " -> ");
-		// int index = findOrCreateIndexOf(lpk);
-		// HashSet<Integer> indexs = impactMap.get(index);
-		// for(int i : indexs) {
-		// System.out.println(" " + impactLpkWithInsts.get(i));
-		// }
-		// }
-		// }
-		 int size = 0;
-		 for(HashSet<Integer> value : impactMap.values()) {
-		 size += value.size();
-		 }
-		 HzqStub.stubPrint("edge size = " + size + ", keySize = " +
-		 impactMap.keySet().size() + ", impacts.size = " +
-		 impactIndexMap.size() + ", mapIndex.size = " +
-		 impactIndexMap.size());
-		// System.out.println("\n\n\n");
-		// Assertions.UNREACHABLE();
+		HzqStub.stubPrint("end compute indexs");
+
 	}
 
 	public void mainOnce() {
@@ -659,16 +494,6 @@ public class VariantForwardImpact {
 						}
 					}
 
-				} else if (inst instanceof AstLexicalRead) {
-					// xhr_send方法需要
-					AstLexicalRead alr = (AstLexicalRead) inst;
-					if (alr.getAccessCount() != 1) {
-						Assertions.UNREACHABLE();
-					}
-					Access A = alr.getAccess(0);
-					hashMapAdd(globalMap, A.variableName + "@" + A.variableDefiner,
-							new LocalPointerKeyWithInstruction(node, A.valueNumber, inst));
-
 				} else if (inst instanceof SSAInvokeInstruction) {
 					// java的方法调用指令
 					SSAInvokeInstruction invokeInst = (SSAInvokeInstruction) inst;
@@ -703,16 +528,6 @@ public class VariantForwardImpact {
 		}
 	}
 
-	private int findOrCreateIndexOf(LocalPointerKey lpk) {
-		if (impactIndexMap.containsKey(lpk)) {
-			return impactIndexMap.get(lpk);
-		} else {
-			impactLpkWithInsts.add(lpk);
-			impactIndexMap.put(lpk, impactLpkWithInsts.size() - 1);
-			return impactLpkWithInsts.size() - 1;
-		}
-	}
-
 	private class TaintVisitor implements JSInstructionVisitor {
 
 		private CGNode node;
@@ -720,16 +535,15 @@ public class VariantForwardImpact {
 		private DefUse du;
 		private LocalPointerKey currentLpk;
 
-		private Set<Integer> willImpactKeys;
-		private HashSet<Integer> mapSet;
+		private Set<LocalPointerKey> willImpactKeys;
+		private HashSet<LocalPointerKey> mapSet;
 
 		public Set<LocalPointerKey> getWillImpactKeys() {
-			HashSet<LocalPointerKey> hs = new HashSet<>();
-			for (int i : willImpactKeys) {
-				LocalPointerKey impactLpk = impactLpkWithInsts.get(i);
-				hs.add(impactLpk);
-			}
-			return hs;
+			return willImpactKeys;
+		}
+
+		public HashSet<LocalPointerKey> getMapSet() {
+			return mapSet;
 		}
 
 		public TaintVisitor(LocalPointerKey lpk) {
@@ -738,14 +552,11 @@ public class VariantForwardImpact {
 			this.var = lpk.getValueNumber();
 			du = node.getDU();
 			willImpactKeys = new HashSet<>();
-			int index = findOrCreateIndexOf(currentLpk);
-			if (!impactMap.containsKey(index)) {
-				impactMap.put(index, new HashSet<>());
-			}
-			mapSet = impactMap.get(index);
+			mapSet = new HashSet<>();
+			impactMap.put(lpk, mapSet);
 		}
 
-		public void visitSSAPut(SSAFieldAccessInstruction instruction) {
+		private void visitSSAPut(SSAFieldAccessInstruction instruction) {
 			// 给域赋值
 			HashSet<PointerKey> keys = getFieldPointerKeys(node, instruction);
 			for (PointerKey pk : keys) {
@@ -755,36 +566,15 @@ public class VariantForwardImpact {
 				}
 
 				if (!usedFieldKeys.contains(pk)) {
-					usedFieldKeys.add(pk);
 					HashSet<LocalPointerKey> getFieldSet = fieldMap.get(pk);
+					mapSet.addAll(getFieldSet);
+					usedFieldKeys.add(pk);
 					for (LocalPointerKey impactLpk : getFieldSet) {
-						int index = findOrCreateIndexOf(impactLpk);
-						mapSet.add(index);
-						if (!impactMap.containsKey(index) && !willImpactKeys.contains(index)) {
-							willImpactKeys.add(index);
+						if (!impactMap.containsKey(impactLpk) && !willImpactKeys.contains(impactLpk)) {
+							willImpactKeys.add(impactLpk);
 							rootNodes.add(impactLpk.getNode());// add
 						}
 					}
-				}
-			}
-		}
-
-		public void visitAstLexicalAccess(AstLexicalAccess instruction) {
-			if (instruction.getAccessCount() != 1) {
-				Assertions.UNREACHABLE();
-			}
-			Access A = instruction.getAccess(0);
-			String key = A.variableName + "@" + A.variableDefiner;
-			if (!globalMap.containsKey(key)) {
-				return;
-			}
-			HashSet<LocalPointerKey> impactLpks = globalMap.get(key);
-			for (LocalPointerKey impactLpk : impactLpks) {
-				int index = findOrCreateIndexOf(impactLpk);
-				mapSet.add(index);
-				if (!impactMap.containsKey(index) && !willImpactKeys.contains(index)) {
-					willImpactKeys.add(index);
-					rootNodes.add(impactLpk.getNode());// add
 				}
 			}
 		}
@@ -794,14 +584,9 @@ public class VariantForwardImpact {
 				return;
 			}
 			LocalPointerKey impactLpk = new LocalPointerKeyWithInstruction(node, instruction.getDef(), instruction);
-			addImpactLpk(impactLpk);
-		}
-
-		public void addImpactLpk(LocalPointerKey impactLpk) {
-			int index = findOrCreateIndexOf(impactLpk);
-			mapSet.add(index);
-			if (!impactMap.containsKey(index) && !willImpactKeys.contains(index)) {
-				willImpactKeys.add(index);
+			mapSet.add(impactLpk);
+			if (!impactMap.containsKey(impactLpk) && !willImpactKeys.contains(impactLpk)) {
+				willImpactKeys.add(impactLpk);
 			}
 		}
 
@@ -814,7 +599,7 @@ public class VariantForwardImpact {
 		@Override
 		public void visitAstLexicalWrite(AstLexicalWrite instruction) {
 			// HzqStub.stubPrint(node.getIR().getInstructionString(instruction.iindex));
-			visitAstLexicalAccess(instruction);
+			visitOtherInst(instruction);
 		}
 
 		@Override
@@ -876,7 +661,10 @@ public class VariantForwardImpact {
 			// HzqStub.stubPrint(node.getIR().getInstructionString(instruction.iindex));
 			LocalPointerKey impactLpk = new LocalPointerKeyWithInstruction(node, instruction.getArrayRef(),
 					instruction);
-			addImpactLpk(impactLpk);
+			mapSet.add(impactLpk);
+			if (!impactMap.containsKey(impactLpk) && !willImpactKeys.contains(impactLpk)) {
+				willImpactKeys.add(impactLpk);
+			}
 		}
 
 		@Override
@@ -954,7 +742,10 @@ public class VariantForwardImpact {
 					for (SSAAbstractInvokeInstruction invokeInst : invokeInsts) {
 						LocalPointerKey impactLpk = new LocalPointerKeyWithInstruction(preNode, invokeInst.getDef(),
 								instruction);
-						addImpactLpk(impactLpk);
+						mapSet.add(impactLpk);
+						if (!impactMap.containsKey(impactLpk) && !willImpactKeys.contains(impactLpk)) {
+							willImpactKeys.add(impactLpk);
+						}
 					}
 				}
 			}
@@ -1030,10 +821,9 @@ public class VariantForwardImpact {
 						}
 						LocalPointerKey impactLpk = new LocalPointerKeyWithInstruction(handleMessageNode,
 								handleMessageNode.getIR().getParameter(1), invokeInst);
-						int index = findOrCreateIndexOf(impactLpk);
-						mapSet.add(index);
-						if (!impactMap.containsKey(index) && !willImpactKeys.contains(index)) {
-							willImpactKeys.add(index);
+						mapSet.add(impactLpk);
+						if (!impactMap.containsKey(impactLpk) && !willImpactKeys.contains(impactLpk)) {
+							willImpactKeys.add(impactLpk);
 							rootNodes.add(impactLpk.getNode());
 						}
 						// once support
@@ -1055,12 +845,10 @@ public class VariantForwardImpact {
 							.equals(TypeName.findOrCreate("Landroid/content/Intent"))
 							&& succNode.getMethod().getName().toString().startsWith("put")
 							&& succNode.getMethod().getName().toString().endsWith("Extra")) {
-
+						mapSet.addAll(globalMap.get(intent));
 						for (LocalPointerKey impactLpk : globalMap.get(intent)) {
-							int index = findOrCreateIndexOf(impactLpk);
-							mapSet.add(index);
-							if (!impactMap.containsKey(index) && !willImpactKeys.contains(index)) {
-								willImpactKeys.add(index);
+							if (!impactMap.containsKey(impactLpk) && !willImpactKeys.contains(impactLpk)) {
+								willImpactKeys.add(impactLpk);
 								rootNodes.add(impactLpk.getNode());
 							}
 						}
@@ -1069,12 +857,10 @@ public class VariantForwardImpact {
 					if (succNode.getMethod().getDeclaringClass().getName()
 							.equals(TypeName.findOrCreate("Landroid/os/Bundle"))
 							&& succNode.getMethod().getName().toString().startsWith("put")) {
-
+						mapSet.addAll(globalMap.get(bundle));
 						for (LocalPointerKey impactLpk : globalMap.get(bundle)) {
-							int index = findOrCreateIndexOf(impactLpk);
-							mapSet.add(index);
-							if (!impactMap.containsKey(index) && !willImpactKeys.contains(index)) {
-								willImpactKeys.add(index);
+							if (!impactMap.containsKey(impactLpk) && !willImpactKeys.contains(impactLpk)) {
+								willImpactKeys.add(impactLpk);
 								rootNodes.add(impactLpk.getNode());
 							}
 						}
@@ -1082,10 +868,13 @@ public class VariantForwardImpact {
 					}
 
 					// 原生的
-					if (!invokeInst.getDeclaredResultType().getName().equals(TypeName.findOrCreate("Ljava/lang/Boolean")) && invokeInst.getDef() > 0) {
+					if (invokeInst.getDef() > 0) {
 						LocalPointerKey impactLpk = new LocalPointerKeyWithInstruction(node, invokeInst.getDef(),
 								invokeInst);
-						addImpactLpk(impactLpk);
+						mapSet.add(impactLpk);
+						if (!impactMap.containsKey(impactLpk) && !willImpactKeys.contains(impactLpk)) {
+							willImpactKeys.add(impactLpk);
+						}
 					}
 					if (!succNode.getMethod().isStatic()) {
 						// HzqStub.stubPrint("not static method");
@@ -1093,7 +882,10 @@ public class VariantForwardImpact {
 							// 参数是污点，则规定返回值和实例是污点
 							LocalPointerKey impactLpk = new LocalPointerKeyWithInstruction(node, invokeInst.getUse(0),
 									invokeInst);
-							addImpactLpk(impactLpk);
+							mapSet.add(impactLpk);
+							if (!impactMap.containsKey(impactLpk) && !willImpactKeys.contains(impactLpk)) {
+								willImpactKeys.add(impactLpk);
+							}
 						}
 					}
 				} else {
@@ -1103,7 +895,10 @@ public class VariantForwardImpact {
 
 							LocalPointerKey impactLpk = new LocalPointerKeyWithInstruction(succNode,
 									succNode.getIR().getParameter(i), invokeInst);
-							addImpactLpk(impactLpk);
+							mapSet.add(impactLpk);
+							if (!impactMap.containsKey(impactLpk) && !willImpactKeys.contains(impactLpk)) {
+								willImpactKeys.add(impactLpk);
+							}
 						}
 					}
 				}
@@ -1111,24 +906,25 @@ public class VariantForwardImpact {
 			}
 			if (!hasSuccNode && invokeInst.hasDef()) {
 				LocalPointerKey impactLpk = new LocalPointerKeyWithInstruction(node, invokeInst.getDef(), invokeInst);
-				addImpactLpk(impactLpk);
+				mapSet.add(impactLpk);
+				if (!impactMap.containsKey(impactLpk) && !willImpactKeys.contains(impactLpk)) {
+					willImpactKeys.add(impactLpk);
+				}
 			}
 		}
 
 		@Override
 		public void visitNew(SSANewInstruction instruction) {
-			// HzqStub.stubPrint(node.getIR().getInstructionString(instruction.iindex));
+			//HzqStub.stubPrint(node.getIR().getInstructionString(instruction.iindex));
 			// visitOtherInst(instruction);
-			// if there is a param, it's an array allocation such as "String[] a
-			// = new String[2];"
+			// if there is a param, it's an array allocation such as "String[] a = new String[2];"
 			// not deal
 		}
 
 		@Override
 		public void visitArrayLength(SSAArrayLengthInstruction instruction) {
 			// HzqStub.stubPrint(node.getIR().getInstructionString(instruction.iindex));
-			// visitOtherInst(instruction);
-			// not deal
+			visitOtherInst(instruction);
 		}
 
 		@Override
@@ -1188,7 +984,6 @@ public class VariantForwardImpact {
 			// LocalPointerKeyWithInstruction(node, var, invokeInst);
 			if (isNotStatic && node.getIR().getSymbolTable().isConstant(invokeInst.getUse(0))) {
 				// 判断是否泄露
-
 				String methodName = (String) node.getIR().getSymbolTable().getConstantValue(invokeInst.getUse(0));
 				if (methodName.equals("submit") && invokeInst.getNumberOfParameters() == 2) {
 					hashMapAdd(warnings, "leakage via javascript submit", currentLpk);
@@ -1209,7 +1004,10 @@ public class VariantForwardImpact {
 					if (invokeInst.getDef() > 0) {
 						LocalPointerKey impactLpk = new LocalPointerKeyWithInstruction(node, invokeInst.getDef(),
 								invokeInst);
-						addImpactLpk(impactLpk);
+						mapSet.add(impactLpk);
+						if (!impactMap.containsKey(impactLpk) && !willImpactKeys.contains(impactLpk)) {
+							willImpactKeys.add(impactLpk);
+						}
 					}
 					if (isNotStatic) {
 						// HzqStub.stubPrint("javascript dispatch (not static
@@ -1219,7 +1017,10 @@ public class VariantForwardImpact {
 							// Javascript中，this变量是第二个参数（即getUse(1)）
 							LocalPointerKey impactLpk = new LocalPointerKeyWithInstruction(node, invokeInst.getUse(1),
 									invokeInst);
-							addImpactLpk(impactLpk);
+							mapSet.add(impactLpk);
+							if (!impactMap.containsKey(impactLpk) && !willImpactKeys.contains(impactLpk)) {
+								willImpactKeys.add(impactLpk);
+							}
 						}
 					}
 				} else {
@@ -1233,7 +1034,10 @@ public class VariantForwardImpact {
 								int paraVar = succNode.getIR().getParameter(3);
 								LocalPointerKey impactLpk = new LocalPointerKeyWithInstruction(succNode, paraVar,
 										invokeInst);
-								addImpactLpk(impactLpk);
+								mapSet.add(impactLpk);
+								if (!impactMap.containsKey(impactLpk) && !willImpactKeys.contains(impactLpk)) {
+									willImpactKeys.add(impactLpk);
+								}
 							}
 							continue;
 						}
@@ -1253,7 +1057,10 @@ public class VariantForwardImpact {
 							}
 							LocalPointerKey impactLpk = new LocalPointerKeyWithInstruction(succNode, paraVar,
 									invokeInst);
-							addImpactLpk(impactLpk);
+							mapSet.add(impactLpk);
+							if (!impactMap.containsKey(impactLpk) && !willImpactKeys.contains(impactLpk)) {
+								willImpactKeys.add(impactLpk);
+							}
 						}
 					}
 
@@ -1262,7 +1069,10 @@ public class VariantForwardImpact {
 			}
 			if (!hasSuccNode) {
 				LocalPointerKey impactLpk = new LocalPointerKeyWithInstruction(node, invokeInst.getDef(), invokeInst);
-				addImpactLpk(impactLpk);
+				mapSet.add(impactLpk);
+				if (!impactMap.containsKey(impactLpk) && !willImpactKeys.contains(impactLpk)) {
+					willImpactKeys.add(impactLpk);
+				}
 				if (isNotStatic) {
 					// HzqStub.stubPrint("javascript dispatch (not static
 					// method)");
@@ -1270,7 +1080,10 @@ public class VariantForwardImpact {
 						// 参数是污点，则规定返回值和实例是污点
 						// Javascript中，this变量是第二个参数（即getUse(1)）
 						impactLpk = new LocalPointerKeyWithInstruction(node, invokeInst.getUse(1), invokeInst);
-						addImpactLpk(impactLpk);
+						mapSet.add(impactLpk);
+						if (!impactMap.containsKey(impactLpk) && !willImpactKeys.contains(impactLpk)) {
+							willImpactKeys.add(impactLpk);
+						}
 					}
 				}
 			}
@@ -1294,13 +1107,19 @@ public class VariantForwardImpact {
 
 			AbstractReflectivePut arp = instruction;
 			LocalPointerKey impactLpk = new LocalPointerKeyWithInstruction(node, arp.getObjectRef(), instruction);
-			addImpactLpk(impactLpk);
+			mapSet.add(impactLpk);
+			if (!impactMap.containsKey(impactLpk) && !willImpactKeys.contains(impactLpk)) {
+				willImpactKeys.add(impactLpk);
+			}
 			if (!node.getIR().getSymbolTable().isConstant(arp.getMemberRef())) {// constant
 																				// value
 																				// not
 																				// impact
 				impactLpk = new LocalPointerKeyWithInstruction(node, arp.getMemberRef(), instruction);
-				addImpactLpk(impactLpk);
+				mapSet.add(impactLpk);
+				if (!impactMap.containsKey(impactLpk) && !willImpactKeys.contains(impactLpk)) {
+					willImpactKeys.add(impactLpk);
+				}
 			}
 		}
 
@@ -1338,17 +1157,10 @@ public class VariantForwardImpact {
 	}
 
 	private Set<LocalPointerKey> getOnePKForwardImpacts(LocalPointerKey lpk) {
-
 		CGNode node = lpk.getNode();
 		int var = lpk.getValueNumber();
-		
 
 		TaintVisitor tv = new TaintVisitor(lpk);
-		
-		if(node.getIR().getSymbolTable().isConstant(var) && !rootTaintLpkArray.contains(lpk)) {
-			return new HashSet<>();
-		}
-
 
 		DefUse du = node.getDU();
 
@@ -1405,7 +1217,10 @@ public class VariantForwardImpact {
 							}
 							LocalPointerKey impactLpk = new LocalPointerKeyWithInstruction(preNode,
 									invokeInst.getUse(paraI), ParameterInstruction.getInstance());
-							tv.addImpactLpk(impactLpk);
+							tv.getMapSet().add(impactLpk);
+							if (!impactMap.containsKey(impactLpk) && !tv.getWillImpactKeys().contains(impactLpk)) {
+								tv.getWillImpactKeys().add(impactLpk);
+							}
 						}
 					}
 				}
@@ -1413,8 +1228,6 @@ public class VariantForwardImpact {
 
 		} else if (defInst instanceof SSAGetInstruction) {
 			tv.visitSSAPut((SSAFieldAccessInstruction) defInst);
-		} else if (defInst instanceof AstLexicalRead) {
-			tv.visitAstLexicalAccess((AstLexicalAccess) defInst);
 		}
 
 		Iterator<SSAInstruction> insts = du.getUses(var);

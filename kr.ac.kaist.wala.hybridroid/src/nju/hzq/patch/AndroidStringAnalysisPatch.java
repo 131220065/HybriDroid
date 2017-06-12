@@ -32,7 +32,7 @@ public class AndroidStringAnalysisPatch {
 			cha = ClassHierarchy.make(scope);
 			Collection<IClass> webViewSubClasses = cha
 					.computeSubClasses(TypeReference.find(ClassLoaderReference.Primordial, "Landroid/webkit/WebView"));
-			for (IClass webViewSubClass : webViewSubClasses) {// WebViewµÄ×ÓÀà£¨°üÀ¨WebView£©
+			for (IClass webViewSubClass : webViewSubClasses) {// WebViewï¿½ï¿½ï¿½ï¿½ï¿½à£¨ï¿½ï¿½ï¿½ï¿½WebViewï¿½ï¿½
 				TypeName tn = webViewSubClass.getName();
 				String cDescriptor = tn.toString().substring(1);
 				System.out.println("hzq: subclass = " + cDescriptor);
@@ -46,13 +46,13 @@ public class AndroidStringAnalysisPatch {
 		} catch (ClassHierarchyException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} // Àà²ã´Î£¿
+		} // ï¿½ï¿½ï¿½Î£ï¿½
 		return null;
 
 	}
 	
 	public static List<String> unzipDexFiles(String apkPath, String toFolderPath) {
-		//½âÑ¹apkÖÐµÄ*.dex½âÑ¹µ½Ö¸¶¨ÎÄ¼þ¼Ð£¬²¢·µ»ØdexfileµÄ¾ø¶ÔÂ·¾¶£¬Èç¹ûÃ»ÓÐdexfile£¬·µ»Ø¿ÕArrayList
+		//ï¿½ï¿½Ñ¹apkï¿½Ðµï¿½*.dexï¿½ï¿½Ñ¹ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ä¼ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½dexfileï¿½Ä¾ï¿½ï¿½ï¿½Â·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½ï¿½dexfileï¿½ï¿½ï¿½ï¿½ï¿½Ø¿ï¿½ArrayList
 				List<String> dexPaths = new ArrayList<>();
 				
 				try {
@@ -61,8 +61,8 @@ public class AndroidStringAnalysisPatch {
 					ZipEntry entry = null;
 					while(entries.hasMoreElements()) {
 						entry = entries.nextElement();
-						if(!entry.isDirectory() && entry.getName().endsWith(".dex")) {
-							//½âÑ¹
+						if(!entry.isDirectory() && entry.getName().startsWith("classes") && entry.getName().endsWith(".dex")) {
+							//ï¿½ï¿½Ñ¹
 							String toFilePath = toFolderPath + "/" + entry.getName();
 							File toFile = new File(toFilePath);
 							BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(toFile));
